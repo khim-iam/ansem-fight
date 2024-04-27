@@ -1,0 +1,8 @@
+.image-container{
+    background-image: url('../assets/Background.png');
+    background-size: cover;
+    background-position: center;  /* Center the background image */
+    background-repeat: no-repeat;
+    min-width: 500px;
+    min-height: 300px;
+}

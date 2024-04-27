@@ -2,6 +2,7 @@ import ansem from '../assets/ansem.png';
 import barney from '../assets/barney.png'; 
 import ansemPunch from '../assets/ansem-punch.png';
 import { useState, useEffect } from 'react';
+import "./Homepage.css"
 
 function HomePage() {
     const [wifAmount, setWifAmount] = useState(0);
@@ -67,18 +68,19 @@ function HomePage() {
     };
   
   return (
-      <>
+    <>
     
-      <div className="image-container">
+      <div className="image-container ">
         <img src={images[currentImageIndex]} alt="Ansem" className="image" /> 
         <img src={barney} alt="Barney" className="image" />
       </div>
-      <h1>Ansem vs. Barney</h1>
+      <h1 className='text-blue-500'>Ansem vs. Barney</h1>
       <div className="card">
         <button onClick={handleDeposit}>Deposit WIF</button> 
         <p>WIF Deposited: {wifAmount}</p>
         <p>Punches Landed: {punches}</p> 
       </div>
+
 
     </>
   )
