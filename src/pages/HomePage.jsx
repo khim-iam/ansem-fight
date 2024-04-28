@@ -100,12 +100,16 @@ function HomePage() {
   
   return (
     <>
+      
     
-      <div className="image-container ">
+      <div className="image-container relative">
+        <div className= "w-10 h-5 bg-white">
+          
+        </div>
         <img src={currentImageArray[currentImageIndex]} alt="Ansem" className="image" /> 
       </div>
-      <h1 className='text-blue-500'>Ansem vs. Barney</h1>
-      <div className="card">
+      <h1 className="custom-heading text-6xl text-[#2196F3]">Ansem vs. Barney</h1>
+        <div className="card custom-heading text-[25px]">
         <button onClick={handleDeposit}>Deposit WIF</button> 
         <p>WIF Deposited: {wifAmount}</p>
         <p>Punches Landed: {punches}</p> 
