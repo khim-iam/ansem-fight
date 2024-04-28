@@ -6,3 +6,9 @@
     min-width: 46.875rem; /* 500px / 16px = 31.25rem */
     min-height: 28.125rem; /* 300px / 16px = 18.75rem */
 }
+
+@font-face {
+    font-family: '8bit';
+    src: url('../assets/8-bit.ttf') format('truetype');
+  }
+  

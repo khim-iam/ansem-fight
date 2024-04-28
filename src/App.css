@@ -22,13 +22,19 @@
   display: flex;
   justify-content: center; /* Center horizontally */
   align-items: flex-start; /* Align to top */
-  gap: 50px; /* Adjust gap as needed */
+  gap: 5px; /* Adjust gap as needed */
 }
 
 .image {
   width: 46.875rem; /* Adjust image width as needed */
   height: auto; /* Maintain aspect ratio */
 }
+
+.custom-heading {
+  font-family: '8bit', sans-serif;
+
+}
+
 
 @keyframes logo-spin {
   from {
@@ -38,6 +44,12 @@
     transform: rotate(360deg);
   }
 }
+
+@font-face {
+  font-family: '8bit';
+  src: url('./assets/8-bit.ttf') format('truetype');
+}
+
 
 @media (prefers-reduced-motion: no-preference) {
   a:nth-of-type(2) .logo {
