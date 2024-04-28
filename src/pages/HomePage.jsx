@@ -7,7 +7,7 @@ import t3ansemPunch from '../assets/t33.png';
 import upansemPunch from '../assets/uppercut.png';
 import winImage from '../assets/win.png'; // Add win image asset
 import loseImage from '../assets/lose.png'; // Add lose image asset
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Howl, Howler } from 'howler';
 import punchSound from '../assets/punch.m4a';
 import winSound from '../assets/win.m4a';
@@ -30,23 +30,36 @@ function HomePage() {
     const t3Images = [ansemPunch, t3ansemPunch, upansemPunch];
     const matchres = [loseImage, winImage];
 
-    
     const [currentImageArray, setCurrentImageArray] = useState(images); // Start with Ansem images
 
-  
-  
+    const soundRef = useRef(null); // Ref to store the sound object
+
     useEffect(() => {
 
         // Setup the background sound
         
-      const sound = new Howl({
-          src: [bgSound],
-          autoplay: true,
-          loop: true,
-          volume: 0.5,
-       });
+    //  const sound = new Howl({
+    //    src: [bgSound],
+     //     autoplay: true,
+  //       loop: true,
+   //      volume: 0.1,
+   //    });
 
+   if (!soundRef.current) {
+    // Initialize and play the sound if it hasn't been initialized
+    soundRef.current = new Howl({
+        src: [bgSound],
+        autoplay: true,
+        loop: true,
+        volume: 0.1,
+    });
+    }
 
+// Optional: Play the sound if not already playing (e.g., after being stopped manually elsewhere in your component)
+    if (!soundRef.current.playing()) {
+        soundRef.current.play();
+    }
+    
       return () => {
         clearInterval(intervalId);
       };
