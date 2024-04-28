@@ -5,7 +5,16 @@ import t1ansemPunch from '../assets/T1-Ansem-Punch2.png';
 import t2ansemPunch from '../assets/Tier_22.png';
 import t3ansemPunch from '../assets/t33.png';
 import upansemPunch from '../assets/uppercut.png';
+import winImage from '../assets/win.png'; // Add win image asset
+import loseImage from '../assets/lose.png'; // Add lose image asset
 import { useState, useEffect } from 'react';
+import { Howl, Howler } from 'howler';
+import punchSound from '../assets/punch.m4a';
+import winSound from '../assets/win.m4a';
+import loseSound from '../assets/lose.m4a';
+import bellSound from '../assets/bell.m4a';
+import t3Sound from '../assets/tier3powerup.m4a';
+import bgSound from '../assets/background.mp3'; // Adjust the path as necessary
 import "./Homepage.css"
 
 function HomePage() {
@@ -19,6 +28,7 @@ function HomePage() {
     const t1Images = [ansemPunch, t1ansemPunch];
     const t2Images = [ansemPunch, t1ansemPunch, t2ansemPunch];
     const t3Images = [ansemPunch, t3ansemPunch, upansemPunch];
+    const matchres = [loseImage, winImage];
 
     
     const [currentImageArray, setCurrentImageArray] = useState(images); // Start with Ansem images
@@ -26,12 +36,68 @@ function HomePage() {
   
   
     useEffect(() => {
+
+        // Setup the background sound
+        
+      const sound = new Howl({
+          src: [bgSound],
+          autoplay: true,
+          loop: true,
+          volume: 0.5,
+       });
+
+
       return () => {
         clearInterval(intervalId);
       };
     }, [intervalId]);
+
+    const playSound = (soundType) => {
+      let sound;
+      switch (soundType) {
+          case 'punch':
+              sound = new Audio(punchSound);
+              break;
+          case 'win':
+              sound = new Audio(winSound);
+              break;
+          case 'lose':
+              sound = new Audio(loseSound);
+              break;
+          case 'bell':
+              sound = new Audio(bellSound);
+              break;
+          case 't3':
+              sound = new Audio(t3Sound);
+              break;
+          default:
+              return;
+      }
+      sound.play();
+   };
+
+    const handleDefault = () => {
+
+      // Clear any existing intervals to prevent multiple intervals running at the same time
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
   
-    const handleImageUpdate = (maxRuns, Arr, tym) => {
+      // Set up a new interval
+      const id = setInterval(() => {
+        setCurrentImageIndex(0);
+        setCurrentImageArray(images);
+        return;
+
+      }, 2000);// Change image every 1000 milliseconds (1 second)
+  
+      setIntervalId(id);
+    };
+  
+
+
+
+    const handleImageUpdate = (maxRuns, Arr, tym, npunch) => {
       let runCount = 0;
       // Clear any existing intervals to prevent multiple intervals running at the same time
       if (intervalId) {
@@ -43,13 +109,21 @@ function HomePage() {
         if (runCount >= maxRuns) {
           clearInterval(id);
           setIntervalId(null); // Reset the interval ID state
-          setCurrentImageIndex(0);
-          setCurrentImageArray(images);
+         // setCurrentImageIndex(0);
+         // setCurrentImageArray(images);
 
+          
+          setCurrentImageArray(matchres);
+          setCurrentImageIndex(npunch > 35 ? 1 : 0);
+          playSound(npunch > 35 ?'win':'lose');
+          handleDefault();
           return;
         }
         let len = Arr.length;
         setCurrentImageIndex(prevIndex => (prevIndex + 1) % len );
+
+        playSound('punch');
+
         runCount++; // Increment the run count each time the interval fires
       }, 500+tym);// Change image every 1000 milliseconds (1 second)
   
@@ -60,9 +134,11 @@ function HomePage() {
       const inputWif = prompt("Enter WIF amount (positive number):");
       const wif = Number(inputWif);
 
-     
+
       
       if (wif > 0) {
+        playSound('bell');
+
         setWifAmount(wif);
   
         let minPunches, maxPunches;
@@ -82,15 +158,20 @@ function HomePage() {
         setPunches(generatedPunches);
         if (wif === 1) {
           setCurrentImageArray(t1Images);
-          handleImageUpdate(2*generatedPunches, t1Images, 0);
+          handleImageUpdate(2*generatedPunches, t1Images, 0, generatedPunches);
           
         } else if (wif <= 40) {
           setCurrentImageArray(t2Images);
-          handleImageUpdate(2*generatedPunches, t2Images, 0);
+          handleImageUpdate(2*generatedPunches, t2Images, 0, generatedPunches);
+
         } else {
           setCurrentImageArray(t3Images);
-          handleImageUpdate(2, t3Images, 2500);
+          playSound('t3');
+          handleImageUpdate(2, t3Images, 2000, generatedPunches);
         }
+
+
+        
        // setCurrentImageArray(t1Images);
        // handleImageUpdate(2*generatedPunches, currentImageArray);
       } else {
@@ -103,9 +184,6 @@ function HomePage() {
       
     
       <div className="image-container relative">
-        <div className= "w-10 h-5 bg-white">
-          
-        </div>
         <img src={currentImageArray[currentImageIndex]} alt="Ansem" className="image" /> 
       </div>
       <h1 className="custom-heading text-6xl text-[#2196F3]">Ansem vs. Barney</h1>
