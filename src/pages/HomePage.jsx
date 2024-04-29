@@ -72,16 +72,21 @@ function HomePage() {
     background: new Howl({ src: [sounds.background], loop: true, volume: 0.1 })
   });
   const containerRef = useRef(null);
+  const [leaderboard, setLeaderboard] = useState([
+    { name: "Player One", score: 50 },
+    { name: "Player Two", score: 45 },
+    { name: "Player Three", score: 30 }
+]);
   useEffect(() => {
     const handlePunchSound = () => {
       setTimeout(() => {
         containerRef.current.classList.add('cameraShake');
         setTimeout(() => {
           containerRef.current.classList.remove('cameraShake');
-        }, 10); // remove the class after 75ms
-      }, 10); // add the class 200ms before the punch sound plays
+        }, 5); // remove the class after 75ms
+      }, 5 ); // add the class 200ms before the punch sound plays
     };
-  
+    
     soundRef.current.punch.on('play', (id, seek) => {
       setTimeout(handlePunchSound, seek - 1); // add cameraShake 100ms before playback
     }); 
@@ -110,7 +115,9 @@ function HomePage() {
 
     soundRef.current[soundType].play();
   };
-
+  const updateLeaderboard = (newScore) => {
+    setLeaderboard(current => [...current, newScore].sort((a, b) => b.score - a.score));
+};
   const handleImageUpdate = (maxRuns, imageSet, delay, npunch) => {
     let runCount = 0;
     clearInterval(intervalRef.current);
@@ -205,11 +212,20 @@ function HomePage() {
   <img src={currentImageArray[currentImageIndex]} alt="Game character" />
 </div>  
           <h1 className="custom-heading text-6xl text-[#2196F3]">Ansem vs. Barney</h1>
-          <div className="card custom-heading text-[25px]">
+          <div className="card custom-heading text-[27px]">
               <button onClick={handleDeposit}>Deposit WIF</button> 
               <p>WIF Deposited: {wifAmount}</p>
               <p>Punches Landed: {punches}</p> 
           </div>
+
+          <div className="leaderboard custom-heading">
+                <h2 className='text-5xl'>Leaderboard</h2>
+                <ul className='text-3xl'>
+                    {leaderboard.map((entry, index) => (
+                        <li key={index}>{entry.name}: {entry.score}</li>
+                    ))}
+                </ul>
+            </div>
       </>
   );
 }

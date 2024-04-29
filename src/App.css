@@ -22,7 +22,7 @@
   display: flex;
   justify-content: center; /* Center horizontally */
   align-items: flex-start; /* Align to top */
-  gap: 5px; /* Adjust gap as needed */
+  /* Adjust gap as needed */
 }
 
 .image {
@@ -58,7 +58,8 @@
 }
 
 .card {
-  padding: 2em;
+  padding: 16px;
+  margin-bottom: 48px;
 }
 
 .read-the-docs {
