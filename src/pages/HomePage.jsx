@@ -1,201 +1,178 @@
+import React, { useState, useEffect, useRef } from 'react';
+// Import assets and howler
+import { Howl } from 'howler';
 import ansem from '../assets/start.png'; 
-import barney from '../assets/barney.png'; 
 import ansemPunch from '../assets/idlee.png';
 import t1ansemPunch from '../assets/T1-Ansem-Punch2.png';
 import t2ansemPunch from '../assets/Tier_22.png';
 import t3ansemPunch from '../assets/t33.png';
 import upansemPunch from '../assets/uppercut.png';
-import winImage from '../assets/win.png'; // Add win image asset
-import loseImage from '../assets/lose.png'; // Add lose image asset
-import { useState, useEffect } from 'react';
-import { Howl, Howler } from 'howler';
+import winImage from '../assets/win.png';
+import loseImage from '../assets/lose.png';
 import punchSound from '../assets/punch.m4a';
 import winSound from '../assets/win.m4a';
 import loseSound from '../assets/lose.m4a';
 import bellSound from '../assets/bell.m4a';
 import t3Sound from '../assets/tier3powerup.m4a';
-import bgSound from '../assets/background.mp3'; // Adjust the path as necessary
+import bgSound from '../assets/background.mp3';
 import "./Homepage.css"
 
+const SoundTypes = {
+  PUNCH: 'punch',
+  WIN: 'win',
+  LOSE: 'lose',
+  BELL: 'bell',
+  TIER3: 't3'
+};
+
+const imageSets = {
+  t1: [ansemPunch, t1ansemPunch],
+  t2: [ansemPunch, t1ansemPunch, t2ansemPunch],
+  t3: [ansemPunch, t3ansemPunch, upansemPunch],
+  default: [ansem, ansemPunch, t1ansemPunch],
+  result: [loseImage, winImage]
+};
+
+const sounds = {
+  [SoundTypes.PUNCH]: punchSound,
+  [SoundTypes.WIN]: winSound,
+  [SoundTypes.LOSE]: loseSound,
+  [SoundTypes.BELL]: bellSound,
+  [SoundTypes.TIER3]: t3Sound,
+  background: bgSound
+};
+
+const PunchesConfig = [{
+  minPunches: 1,
+  maxPunches: 15,
+  imageArr: imageSets.t1
+},
+{
+  minPunches: 16,
+  maxPunches: 50,
+  imageArr: imageSets.t2
+},
+{
+  minPunches: 51,
+  maxPunches: 100,
+  imageArr: imageSets.t3
+}];
+
 function HomePage() {
-    const [wifAmount, setWifAmount] = useState(0);
-    const [punches, setPunches] = useState(0);
-    const [intervalId, setIntervalId] = useState(null); // 
-    const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [wifAmount, setWifAmount] = useState(0);
+  const [punches, setPunches] = useState(0);
+  const [intervalId, setIntervalId] = useState(null);
+  const [currentImageArray, setCurrentImageArray] = useState(imageSets.default);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  
-    const images = [ansem, ansemPunch, t1ansemPunch];
-    const t1Images = [ansemPunch, t1ansemPunch];
-    const t2Images = [ansemPunch, t1ansemPunch, t2ansemPunch];
-    const t3Images = [ansemPunch, t3ansemPunch, upansemPunch];
-    const matchres = [loseImage, winImage];
+  const soundRef = useRef(null);
 
-    
-    const [currentImageArray, setCurrentImageArray] = useState(images); // Start with Ansem images
-
-  
-  
-    useEffect(() => {
-
-        // Setup the background sound
-        
-      const sound = new Howl({
-          src: [bgSound],
-          autoplay: true,
-          loop: true,
-          volume: 0.5,
-       });
-
-
-      return () => {
-        clearInterval(intervalId);
-      };
-    }, [intervalId]);
-
-    const playSound = (soundType) => {
-      let sound;
-      switch (soundType) {
-          case 'punch':
-              sound = new Audio(punchSound);
-              break;
-          case 'win':
-              sound = new Audio(winSound);
-              break;
-          case 'lose':
-              sound = new Audio(loseSound);
-              break;
-          case 'bell':
-              sound = new Audio(bellSound);
-              break;
-          case 't3':
-              sound = new Audio(t3Sound);
-              break;
-          default:
-              return;
+  useEffect(() => {
+      if (!soundRef.current) {
+          soundRef.current = new Howl({ src: [sounds.background], autoplay: true, loop: true, volume: 0.1 });
       }
+      if (!soundRef.current.playing()) {
+          soundRef.current.play();
+      }
+      return () => clearInterval(intervalId);
+  }, [intervalId]);
+
+  const playSound = (soundType) => {
+    return new Promise((resolve, reject) => {
+      const sound = new Audio(sounds[soundType]);
       sound.play();
-   };
-
-    const handleDefault = () => {
-
-      // Clear any existing intervals to prevent multiple intervals running at the same time
-      if (intervalId) {
-        clearInterval(intervalId);
-      }
-  
-      // Set up a new interval
-      const id = setInterval(() => {
-        setCurrentImageIndex(0);
-        setCurrentImageArray(images);
+      sound.onended = resolve;
+      sound.onerror = reject;
+    });
+  };
+  const handleImageUpdate = (maxRuns, imageSet, delay, npunch) => {
+    let runCount = 0;
+    clearInterval(intervalId);
+    const id = setInterval(async () => {
+      if (runCount >= maxRuns) {
+        clearInterval(id);
+        setIntervalId(null);
+        setCurrentImageArray(imageSets.result);
+        setCurrentImageIndex(npunch > 35 ? 1 : 0);
+        await playSound(npunch > 35 ? SoundTypes.WIN : SoundTypes.LOSE);
+        handleDefault();
         return;
-
-      }, 2000);// Change image every 1000 milliseconds (1 second)
-  
-      setIntervalId(id);
-    };
-  
-
-
-
-    const handleImageUpdate = (maxRuns, Arr, tym, npunch) => {
-      let runCount = 0;
-      // Clear any existing intervals to prevent multiple intervals running at the same time
-      if (intervalId) {
-        clearInterval(intervalId);
       }
-  
-      // Set up a new interval
-      const id = setInterval(() => {
-        if (runCount >= maxRuns) {
-          clearInterval(id);
-          setIntervalId(null); // Reset the interval ID state
-         // setCurrentImageIndex(0);
-         // setCurrentImageArray(images);
-
-          
-          setCurrentImageArray(matchres);
-          setCurrentImageIndex(npunch > 35 ? 1 : 0);
-          playSound(npunch > 35 ?'win':'lose');
-          handleDefault();
-          return;
+      for (let i = 0; i < 3; i++) {
+        if (i < 2) { // play punch sound for punch 1 and punch 2
+          await playSound(SoundTypes.PUNCH);
         }
-        let len = Arr.length;
-        setCurrentImageIndex(prevIndex => (prevIndex + 1) % len );
-
-        playSound('punch');
-
-        runCount++; // Increment the run count each time the interval fires
-      }, 500+tym);// Change image every 1000 milliseconds (1 second)
-  
+        setTimeout(() => {
+          setCurrentImageIndex(i % imageSet.length);
+        }, i * 500); // flip through the 3 punch images (punch 1, punch 2, stance)
+      }
+      setPunches(p => p - 1);
+      runCount++;
+    }, 2000); // adjust the interval time to control the speed of the image flip sequence
+    setIntervalId(id);
+  };
+  const handleDefault = () => {
+      clearInterval(intervalId);
+      const id = setInterval(() => {
+          setCurrentImageIndex(0);
+          setCurrentImageArray(imageSets.default);
+      }, 2000);
       setIntervalId(id);
-    };
-  
-    const handleDeposit = () => {
+  };
+
+  const generatePunches = (minPunches, maxPunches) => {
+    const x = Math.floor(Math.random() * (maxPunches - minPunches + 1)) + minPunches;
+    setPunches(x);  // This should only set the initial state
+    return x;
+  };
+
+  const handleDeposit = () => {
       const inputWif = prompt("Enter WIF amount (positive number):");
       const wif = Number(inputWif);
-
-
-      
       if (wif > 0) {
-        playSound('bell');
+          playSound(SoundTypes.BELL);
+          setWifAmount(wif);
+          let minPunches, maxPunches, imageArr;
 
-        setWifAmount(wif);
-  
-        let minPunches, maxPunches;
-        if (wif === 1) {
-          minPunches = 1;
-          maxPunches = 15;
+          if (wif <= 40) {
+            if (wif === 1) {
+              ({minPunches, maxPunches, imageArr} = PunchesConfig[0]);
+            } else {
+              ({minPunches, maxPunches, imageArr} = PunchesConfig[1]);
+            }
+
+
+          const randPunches = generatePunches(minPunches, maxPunches);
+          setCurrentImageArray(imageArr);
+          handleImageUpdate(randPunches, imageArr, 0, randPunches);
+          } else {
+            ({minPunches, maxPunches, imageArr} = PunchesConfig[2]);
+            playSound(SoundTypes.TIER3);
+
+          const randPunches = generatePunches(minPunches, maxPunches);
+          setCurrentImageArray(imageArr);
+          handleImageUpdate(randPunches, imageArr, 2000, randPunches);
           
-        } else if (wif <= 40) {
-          minPunches = 16;
-          maxPunches = 50;
-        } else {
-          minPunches = 51;  
-          maxPunches = 100; // Adjust upper limit as needed
         }
-  
-        const generatedPunches = Math.floor(Math.random() * (maxPunches - minPunches + 1)) + minPunches;
-        setPunches(generatedPunches);
-        if (wif === 1) {
-          setCurrentImageArray(t1Images);
-          handleImageUpdate(2*generatedPunches, t1Images, 0, generatedPunches);
-          
-        } else if (wif <= 40) {
-          setCurrentImageArray(t2Images);
-          handleImageUpdate(2*generatedPunches, t2Images, 0, generatedPunches);
-
-        } else {
-          setCurrentImageArray(t3Images);
-          playSound('t3');
-          handleImageUpdate(2, t3Images, 2000, generatedPunches);
-        }
-
-
-        
-       // setCurrentImageArray(t1Images);
-       // handleImageUpdate(2*generatedPunches, currentImageArray);
+  // Adjusted to use randPunches directly
       } else {
-        alert("Please enter a positive number for WIF amount.");
+          alert("Please enter a positive number for WIF amount.");
       }
-    };
-  
+  };
+
   return (
-    <>
-      
-    
-      <div className="image-container relative">
-        <img src={currentImageArray[currentImageIndex]} alt="Ansem" className="image" /> 
-      </div>
-      <h1 className="custom-heading text-6xl text-[#2196F3]">Ansem vs. Barney</h1>
-        <div className="card custom-heading text-[25px]">
-        <button onClick={handleDeposit}>Deposit WIF</button> 
-        <p>WIF Deposited: {wifAmount}</p>
-        <p>Punches Landed: {punches}</p> 
-      </div>
-
-
-    </>
-  )
+      <>
+          <div className="image-container relative">
+              <img src={currentImageArray[currentImageIndex]} alt="Game character" />
+          </div>
+          <h1 className="custom-heading text-6xl text-[#2196F3]">Ansem vs. Barney</h1>
+          <div className="card custom-heading text-[25px]">
+              <button onClick={handleDeposit}>Deposit WIF</button> 
+              <p>WIF Deposited: {wifAmount}</p>
+              <p>Punches Landed: {punches}</p> 
+          </div>
+      </>
+  );
 }
 
-export default HomePage
+export default HomePage;
