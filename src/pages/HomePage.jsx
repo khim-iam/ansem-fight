@@ -56,7 +56,7 @@ const PunchesConfig = [{
   maxPunches: 100,
   imageArr: imageSets.t3
 }];
-
+const SPEED = 2;
 function HomePage() {
   const [wifAmount, setWifAmount] = useState(0);
   const [punches, setPunches] = useState(0);
@@ -90,12 +90,12 @@ const depositButtonRef = useRef(null);
         containerRef.current.classList.add('cameraShake');
         setTimeout(() => {
           containerRef.current.classList.remove('cameraShake');
-        }, 50); // remove the class after 75ms
-      }, 30  ); // add the class 200ms before the punch sound plays
+        }, 50/SPEED); // remove the class after 75ms
+      }, 30/SPEED  ); // add the class 200ms before the punch sound plays
     };
     
     soundRef.current.punch.on('play', (id, seek) => {
-      setTimeout(handlePunchSound, seek - 1); // add cameraShake 100ms before playback
+      setTimeout(handlePunchSound, seek/SPEED - 1/SPEED); // add cameraShake 100ms before playback
     }); 
   
     return () => {
@@ -158,10 +158,10 @@ const handleImageUpdate = (maxRuns, imageSet, delay, npunch) => {
             soundRef.current.tier3.play(); // start T3 music after a delay
           }, 0); // adjust the delay time as needed
         }else if (i < currentImages.length - 1) { // Play punch sound for all but the last image
-          setTimeout(() => playSound(SoundTypes.PUNCH), (imageSet === imageSets.t3 ? 2 : 2))
+          setTimeout(() => playSound(SoundTypes.PUNCH), 2/SPEED)
         }
         setCurrentImageIndex(i % currentImages.length);
-      }, i * (imageSet === imageSets.t3 && i === 0 ? 800 : 750));
+      }, i/SPEED * (imageSet === imageSets.t3 && i === 0 ? 800/SPEED : 750/SPEED));
     }
 
     if (imageSet === imageSets.t3){
@@ -171,7 +171,7 @@ const handleImageUpdate = (maxRuns, imageSet, delay, npunch) => {
     }
     
     setPunches(p => p - 1);
-  }, delay + 2000);
+  }, delay/SPEED + 2000/SPEED);
   intervalRef.current = id;
 };
   // Fisher-Yates (Knuth) shuffle function for array randomization
@@ -189,7 +189,7 @@ const handleImageUpdate = (maxRuns, imageSet, delay, npunch) => {
       const id = setInterval(() => {
           setCurrentImageIndex(0);
           setCurrentImageArray(imageSets.default);
-      }, 2000);
+      }, 2000/SPEED);
       intervalRef.current = id;
   };
 
@@ -209,7 +209,7 @@ const handleImageUpdate = (maxRuns, imageSet, delay, npunch) => {
       let minPunches, maxPunches, imageArr;
   
       if (wif >= 1) { // removed the condition wif <= 40
-        ({minPunches, maxPunches, imageArr} = wif < 16 ? PunchesConfig[0] : wif < 51 ? PunchesConfig[1] : PunchesConfig[2]);
+        ({minPunches, maxPunches, imageArr} = wif == 1 ? PunchesConfig[0] : wif < 41 ? PunchesConfig[1] : PunchesConfig[2]);
         const randPunches = generatePunches(minPunches, maxPunches);
         setCurrentImageArray(imageArr);
         handleImageUpdate(randPunches, imageArr, 0, randPunches);
