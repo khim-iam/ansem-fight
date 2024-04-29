@@ -87,6 +87,7 @@ function HomePage() {
   };
   const handleImageUpdate = (maxRuns, imageSet, delay, npunch) => {
     let runCount = 0;
+    let currentIndex = 0;
     clearInterval(intervalId);
     const id = setInterval(async () => {
       if (runCount >= maxRuns) {
@@ -98,13 +99,22 @@ function HomePage() {
         handleDefault();
         return;
       }
-      for (let i = 0; i < 3; i++) {
-        if (i < 2) { // play punch sound for punch 1 and punch 2
-          await playSound(SoundTypes.PUNCH);
+      for (let i = 0; i < imageSet.length; i++) {
+        if (imageSet.length === 2) { // 2-image set (punch and stance)
+          if (i === 0) { // play punch sound for the first image (punch)
+            await playSound(SoundTypes.PUNCH);
+          }
+          setTimeout(() => {
+            setCurrentImageIndex(i % imageSet.length);
+          }, i * 750); // adjusted timing for 2-image set
+        } else {
+          if (i < imageSet.length - 1) { // play punch sound for all but the last image
+            await playSound(SoundTypes.PUNCH);
+          }
+          setTimeout(() => {
+            setCurrentImageIndex(i % imageSet.length);
+          }, i * 500); // flip through the images
         }
-        setTimeout(() => {
-          setCurrentImageIndex(i % imageSet.length);
-        }, i * 500); // flip through the 3 punch images (punch 1, punch 2, stance)
       }
       setPunches(p => p - 1);
       runCount++;
