@@ -83,8 +83,8 @@ function HomePage() {
         containerRef.current.classList.add('cameraShake');
         setTimeout(() => {
           containerRef.current.classList.remove('cameraShake');
-        }, 5); // remove the class after 75ms
-      }, 5 ); // add the class 200ms before the punch sound plays
+        }, 50); // remove the class after 75ms
+      }, 30  ); // add the class 200ms before the punch sound plays
     };
     
     soundRef.current.punch.on('play', (id, seek) => {
@@ -118,43 +118,53 @@ function HomePage() {
   const updateLeaderboard = (newScore) => {
     setLeaderboard(current => [...current, newScore].sort((a, b) => b.score - a.score));
 };
-  const handleImageUpdate = (maxRuns, imageSet, delay, npunch) => {
-    let runCount = 0;
-    clearInterval(intervalRef.current);
-    const id = setInterval(async () => {
-      if (runCount >= maxRuns) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-        setCurrentImageArray(imageSets.result);
-        setCurrentImageIndex(npunch > 35 ? 1 : 0);
-        await playSound(npunch > 35 ? SoundTypes.WIN : SoundTypes.LOSE);
-        handleDefault();
-        return;
-      }
-  
-      let currentImages = [...imageSet];
-      if (imageSet === imageSets.t2) {
-        // Randomly decide how many punches to use: 1 or 2
-        const numPunches = Math.random() < 0.5 ? 1 : 2;
-        const punches = shuffleArray([imageSet[1], imageSet[2]]).slice(0, numPunches);
-        currentImages = [imageSet[0], ...punches]; // Always include the stance image
-      }
-  
-      // Display the images with the randomized punches
-      for (let i = 0; i < currentImages.length; i++) {
-        setTimeout(() => {
-          
-          if (i < currentImages.length - 1) { // Play punch sound for all but the last image
-            setTimeout(() => playSound(SoundTypes.PUNCH), 2)
-          }
-          setCurrentImageIndex(i % currentImages.length);
-        }, i * 750);  // Timing for each image and sound
-      }
+const handleImageUpdate = (maxRuns, imageSet, delay, npunch) => {
+  let runCount = 0;
+  clearInterval(intervalRef.current);
+  const id = setInterval(async () => {
+    if (runCount >= maxRuns) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+      setCurrentImageArray(imageSets.result);
+      setCurrentImageIndex(npunch > 35 ? 1 : 0);
+      await playSound(npunch > 35 ? SoundTypes.WIN : SoundTypes.LOSE);
+      handleDefault();
+      soundRef.current.tier3.stop(); // stop tier3 sound
+      soundRef.current.background.play(); // resume background music
+      return;
+    }
+
+    let currentImages = [...imageSet];
+    if (imageSet === imageSets.t2) {
+      const numPunches = Math.random() < 0.5 ? 1 : 2;
+      const punches = shuffleArray(imageSet.slice(1)).slice(0, numPunches);
+      currentImages = [imageSet[0], ...punches];
+    }
+
+    for (let i = 0; i < currentImages.length; i++) {
+      setTimeout(() => {
+        if (imageSet === imageSets.t3 && i === 0) {
+          // soundRef.current.background.stop(); // stop background music
+          setTimeout(() => {
+            soundRef.current.tier3.play(); // start T3 music after a delay
+          }, 0); // adjust the delay time as needed
+        }else if (i < currentImages.length - 1) { // Play punch sound for all but the last image
+          setTimeout(() => playSound(SoundTypes.PUNCH), (imageSet === imageSets.t3 ? 2 : 2))
+        }
+        setCurrentImageIndex(i % currentImages.length);
+      }, i * (imageSet === imageSets.t3 && i === 0 ? 800 : 750));
+    }
+
+    if (imageSet === imageSets.t3){
+      runCount = maxRuns;
+    }else{
       runCount++;
-      setPunches(p => p - 1);
-    }, delay + 2000); // Overall interval delay
-    intervalRef.current = id;
-  };
+    }
+    
+    setPunches(p => p - 1);
+  }, delay + 2000);
+  intervalRef.current = id;
+};
   // Fisher-Yates (Knuth) shuffle function for array randomization
   function shuffleArray(array) {
     for (let i = array.length - 1; i > 0; i--) {
@@ -181,29 +191,22 @@ function HomePage() {
   };
 
   const handleDeposit = () => {
-      const inputWif = prompt("Enter WIF amount (positive number):");
-      const wif = Number(inputWif);
-      if (!isNaN(wif) && wif > 0) {
-          playSound(SoundTypes.BELL);
-          setWifAmount(wif);
-          let minPunches, maxPunches, imageArr;
-
-          if (wif <= 40) {
-            ({minPunches, maxPunches, imageArr} = wif === 1 ? PunchesConfig[0] : PunchesConfig[1]);
-            const randPunches = generatePunches(minPunches, maxPunches);
-            setCurrentImageArray(imageArr);
-            handleImageUpdate(randPunches, imageArr, 0, randPunches);
-          } else {
-            ({minPunches, maxPunches, imageArr} = PunchesConfig[2]);
-            playSound(SoundTypes.TIER3);
-
-            const randPunches = generatePunches(minPunches, maxPunches);
-            setCurrentImageArray(imageArr);
-            handleImageUpdate(randPunches, imageArr, 2000, randPunches);
-          }
+    const inputWif = prompt("Enter WIF amount (positive number):");
+    const wif = Number(inputWif);
+    if (!isNaN(wif) && wif > 0) {
+      playSound(SoundTypes.BELL);
+      setWifAmount(wif);
+      let minPunches, maxPunches, imageArr;
+  
+      if (wif >= 1) { // removed the condition wif <= 40
+        ({minPunches, maxPunches, imageArr} = wif < 16 ? PunchesConfig[0] : wif < 51 ? PunchesConfig[1] : PunchesConfig[2]);
+        const randPunches = generatePunches(minPunches, maxPunches);
+        setCurrentImageArray(imageArr);
+        handleImageUpdate(randPunches, imageArr, 0, randPunches);
       } else {
-          alert("Please enter a positive number for WIF amount.");
+        alert("Please enter a positive number for WIF amount.");
       }
+    }
   };
 
   return (
@@ -211,9 +214,13 @@ function HomePage() {
           <div ref={containerRef} className="image-container relative">
   <img src={currentImageArray[currentImageIndex]} alt="Game character" />
 </div>  
-          <h1 className="custom-heading text-6xl text-[#2196F3]">Ansem vs. Barney</h1>
-          <div className="card custom-heading text-[27px]">
-              <button onClick={handleDeposit}>Deposit WIF</button> 
+          <h1 className="custom-heading text-[61px] text-[#2196F3]">Ansem vs. Barney</h1>
+          <div className="card custom-heading text-[30px]">
+              {/* <button onClick={handleDeposit} >Deposit WIF</button>  */}
+              <div class="container">
+                
+                <div className="pixel2 custom-heading text-[36px]" onClick={handleDeposit}>Deposit WIFs</div>
+              </div>
               <p>WIF Deposited: {wifAmount}</p>
               <p>Punches Landed: {punches}</p> 
           </div>
