@@ -8,11 +8,11 @@ import t3ansemPunch from '../assets/t33.png';
 import upansemPunch from '../assets/uppercut.png';
 import winImage from '../assets/win.png';
 import loseImage from '../assets/lose.png';
-import punchSound from '../assets/punch.m4a';
+import punchSound from '../assets/punch1.m4a';
 import winSound from '../assets/win.m4a';
 import loseSound from '../assets/lose.m4a';
 import bellSound from '../assets/bell.m4a';
-import t3Sound from '../assets/tier3powerup.m4a';
+import t3Sound from '../assets/tier3powerup1.m4a';
 import bgSound from '../assets/background.mp3';
 import "./Homepage.css"
 
