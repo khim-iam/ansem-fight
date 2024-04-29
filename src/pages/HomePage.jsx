@@ -77,6 +77,13 @@ function HomePage() {
     { name: "Player Two", score: 45 },
     { name: "Player Three", score: 30 }
 ]);
+
+const [buttomPressed, setButtonPressed] = useState(false);
+const depositButtonRef = useRef(null);
+
+  useEffect(() => {
+    depositButtonRef.current.focus()
+  },[]);
   useEffect(() => {
     const handlePunchSound = () => {
       setTimeout(() => {
@@ -131,6 +138,8 @@ const handleImageUpdate = (maxRuns, imageSet, delay, npunch) => {
       handleDefault();
       soundRef.current.tier3.stop(); // stop tier3 sound
       soundRef.current.background.play(); // resume background music
+      setButtonPressed(false);
+      setPunches(0);
       return;
     }
 
@@ -194,6 +203,7 @@ const handleImageUpdate = (maxRuns, imageSet, delay, npunch) => {
     const inputWif = prompt("Enter WIF amount (positive number):");
     const wif = Number(inputWif);
     if (!isNaN(wif) && wif > 0) {
+      setButtonPressed(true);
       playSound(SoundTypes.BELL);
       setWifAmount(wif);
       let minPunches, maxPunches, imageArr;
@@ -219,7 +229,7 @@ const handleImageUpdate = (maxRuns, imageSet, delay, npunch) => {
               {/* <button onClick={handleDeposit} >Deposit WIF</button>  */}
               <div class="container">
                 
-                <div className="pixel2 custom-heading text-[36px]" onClick={handleDeposit}>Deposit WIFs</div>
+                <div className={`pixel2 custom-heading text-[36px] ${buttomPressed ? "cursor-none" : ""}`} ref={depositButtonRef} disabled={buttomPressed} onClick={handleDeposit}>Deposit WIFs</div>
               </div>
               <p>WIF Deposited: {wifAmount}</p>
               <p>Punches Landed: {punches}</p> 
