@@ -235,7 +235,7 @@ const handleImageUpdate = (maxRuns, imageSet, delay, npunch) => {
                 <div className={`pixel2 custom-heading text-[36px] ${buttomPressed ? "cursor-none" : ""}`} ref={depositButtonRef} disabled={buttomPressed} onClick={handleDeposit}>Deposit WIFs</div>
               </div>
               <p>WIF Deposited: {wifAmount}</p>
-              <p>Punches Landed: {punches}</p> 
+              <p>Punches Remaining: {punches}</p> 
           </div>
 
           <div className="leaderboard custom-heading">
