@@ -66,17 +66,22 @@
     }
     
     .pixel2 {
-        font-size: 32px;
-        color: black;
-        display: inline-block;
-        padding: 15px 8px;
-        position: relative;
-        background: white;
-        z-index: 2;
-        margin: 0 30px;
-        cursor: pointer;
-        text-transform: uppercase;
-    }
+    font-size: 32px;
+    color: black;
+    display: inline-block;
+    padding: 15px 8px;
+    position: relative;
+    background: white;
+    z-index: 2;
+    margin: 0 30px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: transform 0.4s ease; /* Apply the transition to the transform property */
+}
+
+.pixel2:active {
+    transform: scale(0.95); /* Scales down the button to 95% of its original size */
+}
     
     .pixel2::before {
         content: "";

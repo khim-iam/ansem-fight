@@ -103,11 +103,15 @@ const depositButtonRef = useRef(null);
     };
   }, [soundRef, containerRef]);
   useEffect(() => {
-    playSound('background');  // Play background music when component mounts
+    // Try to play background music on load
+    try {
+      soundRef.current.background.play();
+      
+    } catch (error) {
+      console.error("Background music failed to play:", error);    }
 
     return () => {
-        clearInterval(intervalRef.current);
-        soundRef.current.background.stop();  // Ensure background sound is stopped on unmount
+      soundRef.current.background.stop();  // Stop background sound on unmount
     };
   }, []);
 
@@ -136,8 +140,7 @@ const handleImageUpdate = (maxRuns, imageSet, delay, npunch) => {
       setCurrentImageIndex(npunch > 35 ? 1 : 0);
       await playSound(npunch > 35 ? SoundTypes.WIN : SoundTypes.LOSE);
       handleDefault();
-      soundRef.current.tier3.stop(); // stop tier3 sound
-      soundRef.current.background.play(); // resume background music
+       // resume background music
       setButtonPressed(false);
       setPunches(0);
       return;
