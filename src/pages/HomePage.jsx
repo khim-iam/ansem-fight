@@ -38,12 +38,12 @@ const imageSets = {
   ansem_t2: [ansemPunch, t1ansemPunch, t2ansemPunch],
   ansem_t3: [ansemPunch, t3ansemPunch, upansemPunch],
   cook_t1: [ansemPunch, opponent_t1],
-  cook_t2: [ansemPunch, opponent_t2],
+  cook_t2: [ansemPunch, opponent_t1, opponent_t2],
   cook_t3: [],
-  cook_doge_1: [ansemPunch, cook_doge_1],
-  cook_doge_2: [ansemPunch, cook_doge_2],
-  ansem_doge_1: [ansemPunch, ansem_doge_1],
-  ansem_doge_2: [ansemPunch, ansem_doge_2],
+  cook_doge_1: [ansemPunch, cook_doge_1, t1ansemPunch],
+  cook_doge_2: [ansemPunch, cook_doge_2, t2ansemPunch],
+  ansem_doge_1: [ansemPunch, ansem_doge_1, opponent_t1],
+  ansem_doge_2: [ansemPunch, ansem_doge_2, opponent_t2],
   default: [ansem, ansemPunch, t1ansemPunch],
   result: [loseImage, winImage]
 };
@@ -201,20 +201,21 @@ const handleImageUpdate = (maxRuns, imageSet, delay, npunch) => {
 
         //excluding doge sequence from flip
         if ((currentImages === imageSets.cook_doge_1 || currentImages === imageSets.cook_doge_2) && i === 1){
-          setFlipImages(false)
+          setFlipImages(false);
         }else if (player === 'cook'){
-          setFlipImages(true) // resetting flip for cook
+          setFlipImages(true); // reseting flip for cook
         }
         if (currentImages === imageSets.ansem_t3 && i === 0) {
           // soundRef.current.background.stop(); // stop background music
           setTimeout(() => {
             soundRef.current.tier3.play(); // start T3 music after a delay
           }, 0); // adjust the delay time as needed
-        }else if (i < currentImages.length - 1) { // Play punch sound for all but the last image
-          setTimeout(() => playSound(SoundTypes.PUNCH), 2/SPEED)
+        }else if (i > 0 && !((currentImages === imageSets.ansem_doge_1 || currentImages === imageSets.ansem_doge_2 || currentImages === imageSets.cook_doge_2 || currentImages === imageSets.cook_doge_2) && i === 1)) { // Play punch sound for all but the last image
+          setTimeout(() => playSound(SoundTypes.PUNCH), 2/SPEED);
+          setPunches(p => p + 1);
         }
         setCurrentImageIndex(i % currentImages.length);
-      }, i/SPEED * (currentImages === imageSets.ansem_t3 && i === 0 ? 800/SPEED : 750/SPEED));
+      }, i/SPEED * ((currentImages === imageSets.ansem_t3 || currentImages === imageSets.cook_t3) && i === 2 ? 800/SPEED : 750/SPEED));
     }
 
     if (imageSet === imageSets.ansem_t3){
@@ -223,7 +224,7 @@ const handleImageUpdate = (maxRuns, imageSet, delay, npunch) => {
       runCount++;
     }
     
-    setPunches(p => p - 1);
+    
   }, delay/SPEED + 2000/SPEED);
   intervalRef.current = id;
 };
@@ -248,7 +249,6 @@ const handleImageUpdate = (maxRuns, imageSet, delay, npunch) => {
 
   const generatePunches = (minPunches, maxPunches) => {
     const x = Math.floor(Math.random() * (maxPunches - minPunches + 1)) + minPunches;
-    setPunches(x);
     return x;
   };
   //cp this
@@ -325,7 +325,7 @@ const handleImageUpdate = (maxRuns, imageSet, delay, npunch) => {
           </div>
         </div>
         <p>WIF Deposited: {wifAmount}</p>
-        <p>Punches Remaining: {punches}</p>
+        <p>Punches Landed: {punches}</p>
       </div>
       <div className="leaderboard custom-heading">
         <h2 className='text-5xl'>Leaderboard</h2>
