@@ -15,7 +15,8 @@ import bellSound from '../assets/bell.m4a';
 import t3Sound from '../assets/tier3powerup1.m4a';
 import bgSound from '../assets/background.mp3';
 import "./Homepage.css"
-
+import opponent_t1 from '../assets/enemy_punch.png';
+import opponent_t2 from '../assets/enemy_punch2.png';
 const SoundTypes = {
   PUNCH: 'punch',
   WIN: 'win',
@@ -28,6 +29,8 @@ const imageSets = {
   t1: [ansemPunch, t1ansemPunch],
   t2: [ansemPunch, t1ansemPunch, t2ansemPunch],
   t3: [ansemPunch, t3ansemPunch, upansemPunch],
+  opponent_t1: [ansemPunch, opponent_t1],
+  opponent_t2: [ansemPunch, opponent_t1, opponent_t2],
   default: [ansem, ansemPunch, t1ansemPunch],
   result: [loseImage, winImage]
 };
@@ -41,20 +44,25 @@ const sounds = {
   background: bgSound
 };
 
+
+//cp this
 const PunchesConfig = [{
   minPunches: 1,
   maxPunches: 15,
-  imageArr: imageSets.t1
+  imageArr_p1: imageSets.t1,
+  imageArr_p2: imageSets.opponent_t1
 },
 {
   minPunches: 16,
   maxPunches: 50,
-  imageArr: imageSets.t2
+  imageArr_p1: imageSets.t2,
+  imageArr_p2: imageSets.opponent_t2
 },
 {
   minPunches: 51,
   maxPunches: 100,
-  imageArr: imageSets.t3
+  imageArr_p1: imageSets.t3,
+  imageArr_p2: null
 }];
 const SPEED = 2;
 function HomePage() {
@@ -80,7 +88,9 @@ function HomePage() {
 
 const [buttomPressed, setButtonPressed] = useState(false);
 const depositButtonRef = useRef(null);
+const [player, setPlayer] = useState(null);
 
+const [flipImages, setFlipImages] = useState(false);
   useEffect(() => {
     depositButtonRef.current.focus()
   },[]);
@@ -136,9 +146,10 @@ const handleImageUpdate = (maxRuns, imageSet, delay, npunch) => {
     if (runCount >= maxRuns) {
       clearInterval(intervalRef.current);
       intervalRef.current = null;
+      setFlipImages(false);
       setCurrentImageArray(imageSets.result);
       setCurrentImageIndex(npunch > 35 ? 1 : 0);
-      await playSound(npunch > 35 ? SoundTypes.WIN : SoundTypes.LOSE);
+      playSound(npunch > 35 ? SoundTypes.WIN : SoundTypes.LOSE);
       handleDefault();
        // resume background music
       setButtonPressed(false);
@@ -147,7 +158,7 @@ const handleImageUpdate = (maxRuns, imageSet, delay, npunch) => {
     }
 
     let currentImages = [...imageSet];
-    if (imageSet === imageSets.t2) {
+    if (imageSet === imageSets.t2 || imageSet === imageSets.opponent_t2) {
       const numPunches = Math.random() < 0.5 ? 1 : 2;
       const punches = shuffleArray(imageSet.slice(1)).slice(0, numPunches);
       currentImages = [imageSet[0], ...punches];
@@ -201,53 +212,90 @@ const handleImageUpdate = (maxRuns, imageSet, delay, npunch) => {
     setPunches(x);
     return x;
   };
+  //cp this
 
+  
   const handleDeposit = () => {
     const inputWif = prompt("Enter WIF amount (positive number):");
     const wif = Number(inputWif);
-    if (!isNaN(wif) && wif > 0) {
+    if ((!isNaN(wif) && wif > 0) && (player)) {
       setButtonPressed(true);
       playSound(SoundTypes.BELL);
       setWifAmount(wif);
-      let minPunches, maxPunches, imageArr;
+      let minPunches, maxPunches, imageArr_p1, imageArr_p2;
   
       if (wif >= 1) { // removed the condition wif <= 40
-        ({minPunches, maxPunches, imageArr} = wif == 1 ? PunchesConfig[0] : wif < 41 ? PunchesConfig[1] : PunchesConfig[2]);
+        ({minPunches, maxPunches, imageArr_p1, imageArr_p2} = wif == 1 ? PunchesConfig[0] : wif < 41 ? PunchesConfig[1] : PunchesConfig[2]);
         const randPunches = generatePunches(minPunches, maxPunches);
-        setCurrentImageArray(imageArr);
-        handleImageUpdate(randPunches, imageArr, 0, randPunches);
-      } else {
+
+        //refactor this
+        if (player === "ansem"){
+          setCurrentImageArray(imageArr_p1);
+          handleImageUpdate(randPunches, imageArr_p1, 0, randPunches);
+        }else{
+          setFlipImages(true);
+          setCurrentImageArray(imageArr_p2);
+          handleImageUpdate(randPunches, imageArr_p2, 0, randPunches);
+        }
+      } else if (isNaN(wif) || !wif>0 ) {
         alert("Please enter a positive number for WIF amount.");
+      }else{
+        alert("Please select a player");
       }
     }
   };
 
-  return (
-      <>
-          <div ref={containerRef} className="image-container relative">
-  <img src={currentImageArray[currentImageIndex]} alt="Game character" />
-</div>  
-          <h1 className="custom-heading text-[61px] text-[#2196F3]">Ansem vs. Barney</h1>
-          <div className="card custom-heading text-[30px]">
-              {/* <button onClick={handleDeposit} >Deposit WIF</button>  */}
-              <div class="container">
-                
-                <div className={`pixel2 custom-heading text-[36px] ${buttomPressed ? "cursor-none" : ""}`} ref={depositButtonRef} disabled={buttomPressed} onClick={handleDeposit}>Deposit WIFs</div>
-              </div>
-              <p>WIF Deposited: {wifAmount}</p>
-              <p>Punches Remaining: {punches}</p> 
-          </div>
+  //cp this
+  const handlePlayerChange = (event) => {
+    setPlayer(event.target.value)
+  }
+  
 
-          <div className="leaderboard custom-heading">
-                <h2 className='text-5xl'>Leaderboard</h2>
-                <ul className='text-3xl'>
-                    {leaderboard.map((entry, index) => (
-                        <li key={index}>{entry.name}: {entry.score}</li>
-                    ))}
-                </ul>
-            </div>
-      </>
+  return (
+    <>
+      <div ref={containerRef} className="image-container relative">
+        <img src={currentImageArray[currentImageIndex]} alt="Game character" className={`${flipImages ? "scale-x-[-1]" : ""}`}/>
+        
+      </div>
+      <h1 className="custom-heading text-[61px] text-[#2196F3]">Ansem vs. Barney</h1>
+      <div className="card custom-heading text-[30px]">
+        
+        {/* cp this */}
+        <div className='mb-4'>
+        <div className='text-4xl'>
+            Choose characters
+          </div>
+        <div className='space-x-4 flex mb-8 justify-center text-3xl'>
+
+          <label>
+            <input type='radio' value="ansem" checked={player === "ansem"} onClick={handlePlayerChange}/> Ansem
+          </label>
+          <label>
+            <input type='radio' value="barney" checked={player === "barney"} onChange={handlePlayerChange}></input> Barney
+          </label>
+        </div>
+        </div>
+
+
+        <div className="container">
+          <div className={`pixel2 custom-heading text-[36px] ${buttomPressed ? "cursor-none" : ""}`} ref={depositButtonRef} disabled={buttomPressed} onClick={handleDeposit}>
+            Deposit WIFs
+          </div>
+        </div>
+        <p>WIF Deposited: {wifAmount}</p>
+        <p>Punches Remaining: {punches}</p>
+      </div>
+      <div className="leaderboard custom-heading">
+        <h2 className='text-5xl'>Leaderboard</h2>
+        <ul className='text-3xl'>
+          {leaderboard.map((entry, index) => (
+            <li key={index}>{entry.name}: {entry.score}</li>
+          ))}
+        </ul>
+      </div>
+    </>
   );
+  
 }
 
 export default HomePage;
