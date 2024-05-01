@@ -21,6 +21,8 @@ import cook_doge_1 from '../assets/doge_1_rev.png';
 import cook_doge_2 from '../assets/doge_2_rev.png';
 import ansem_doge_1 from '../assets/doge_1.png';
 import ansem_doge_2 from '../assets/doge_2.png';
+import loseImage_cook from '../assets/lose_cook.png';
+import winImage_cook from '../assets/win_cook.png';
 const SoundTypes = {
   PUNCH: 'punch',
   WIN: 'win',
@@ -45,7 +47,8 @@ const imageSets = {
   ansem_doge_1: [ansemPunch, ansem_doge_1, opponent_t1],
   ansem_doge_2: [ansemPunch, ansem_doge_2, opponent_t2],
   default: [ansem, ansemPunch, t1ansemPunch],
-  result: [loseImage, winImage]
+  result_ansem: [loseImage, winImage],
+  result_cook: [loseImage_cook, winImage_cook]
 };
 
 const sounds = {
@@ -161,7 +164,7 @@ const handleImageUpdate = (maxRuns, imageSet, delay, npunch) => {
       intervalRef.current = null;
       setFlipImages(false);
       setPlayer(null);
-      setCurrentImageArray(imageSets.result);
+      setCurrentImageArray(player === 'ansem' ? imageSets.result_ansem : imageSets.result_cook);
       setCurrentImageIndex(npunch > 35 ? 1 : 0);
       playSound(npunch > 35 ? SoundTypes.WIN : SoundTypes.LOSE);
       playSound(SoundTypes.PUNCH);
