@@ -147,9 +147,11 @@ const handleImageUpdate = (maxRuns, imageSet, delay, npunch) => {
       clearInterval(intervalRef.current);
       intervalRef.current = null;
       setFlipImages(false);
+      setPlayer(null);
       setCurrentImageArray(imageSets.result);
       setCurrentImageIndex(npunch > 35 ? 1 : 0);
       playSound(npunch > 35 ? SoundTypes.WIN : SoundTypes.LOSE);
+      playSound(SoundTypes.PUNCH);
       handleDefault();
        // resume background music
       setButtonPressed(false);
@@ -239,8 +241,10 @@ const handleImageUpdate = (maxRuns, imageSet, delay, npunch) => {
         }
       } else if (isNaN(wif) || !wif>0 ) {
         alert("Please enter a positive number for WIF amount.");
+        return;
       }else{
         alert("Please select a player");
+        return;
       }
     }
   };
