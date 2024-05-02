@@ -23,6 +23,8 @@ import ansem_doge_1 from '../assets/doge_1.png';
 import ansem_doge_2 from '../assets/doge_2.png';
 import loseImage_cook from '../assets/lose_cook.png';
 import winImage_cook from '../assets/win_cook.png';
+import cook_t3_pwrup from '../assets/t33_rev.png';
+import t3_cook_win from '../assets/t3_cook_win.png';
 const SoundTypes = {
   PUNCH: 'punch',
   WIN: 'win',
@@ -41,14 +43,14 @@ const imageSets = {
   ansem_t3: [ansemPunch, t3ansemPunch, upansemPunch],
   cook_t1: [ansemPunch, opponent_t1],
   cook_t2: [ansemPunch, opponent_t1, opponent_t2],
-  cook_t3: [],
+  cook_t3: [ansemPunch, cook_t3_pwrup, t3_cook_win],
   cook_doge_1: [ansemPunch, cook_doge_1, t1ansemPunch],
   cook_doge_2: [ansemPunch, cook_doge_2, t2ansemPunch],
   ansem_doge_1: [ansemPunch, ansem_doge_1, opponent_t1],
   ansem_doge_2: [ansemPunch, ansem_doge_2, opponent_t2],
   default: [ansem, ansemPunch, t1ansemPunch],
   result_ansem: [loseImage, winImage],
-  result_cook: [loseImage_cook, winImage_cook]
+  result_cook: [loseImage_cook, t3_cook_win]
 };
 
 const sounds = {
@@ -203,25 +205,25 @@ const handleImageUpdate = (maxRuns, imageSet, delay, npunch) => {
       setTimeout(() => {
 
         //excluding doge sequence from flip
-        if ((currentImages === imageSets.cook_doge_1 || currentImages === imageSets.cook_doge_2) && i === 1){
-          setFlipImages(false);
-        }else if (player === 'cook'){
-          setFlipImages(true); // reseting flip for cook
+        if (currentImages[i] === cook_t3_pwrup || currentImages[i] === t3_cook_win) {
+          setFlipImages(false); // Set flip images to false
+        }else if (currentImages[i] === ansem_doge_1 || currentImages[i] === ansem_doge_2 || currentImages[i] === cook_doge_1 || currentImages[i] === cook_doge_2){
+          setFlipImages(false)
+        } else if (player === 'cook') {
+          setFlipImages(true); // Reset flip for cook
         }
-        if (currentImages === imageSets.ansem_t3 && i === 0) {
-          // soundRef.current.background.stop(); // stop background music
-          setTimeout(() => {
-            soundRef.current.tier3.play(); // start T3 music after a delay
-          }, 0); // adjust the delay time as needed
-        }else if (i > 0 && !((currentImages === imageSets.ansem_doge_1 || currentImages === imageSets.ansem_doge_2 || currentImages === imageSets.cook_doge_2 || currentImages === imageSets.cook_doge_2) && i === 1)) { // Play punch sound for all but the last image
+        if (currentImages[i] === t3ansemPunch || currentImages[i] === cook_t3_pwrup) {
+          soundRef.current.tier3.play();
+        }
+        else if (i > 0 && !((currentImages === imageSets.ansem_doge_1 || currentImages === imageSets.ansem_doge_2 || currentImages === imageSets.cook_doge_2 || currentImages === imageSets.cook_doge_2) && i === 1)) { // Play punch sound for all but the last image
           setTimeout(() => playSound(SoundTypes.PUNCH), 2/SPEED);
           setPunches(p => p + 1);
         }
-        setCurrentImageIndex(i % currentImages.length);
-      }, i/SPEED * ((currentImages === imageSets.ansem_t3 || currentImages === imageSets.cook_t3) && i === 2 ? 800/SPEED : 750/SPEED));
+        setCurrentImageIndex(i);
+      }, i/SPEED * ((currentImages[i] === imageSets.ansem_t3 || currentImages === imageSets.cook_t3) && i === 2 ? 800/SPEED : 750/SPEED));
     }
 
-    if (imageSet === imageSets.ansem_t3){
+    if (currentImages && currentImages[currentImages.length - 1] === upansemPunch|| currentImages[currentImages.length - 1] === t3_cook_win){
       runCount = maxRuns;
     }else{
       runCount++;
@@ -251,8 +253,7 @@ const handleImageUpdate = (maxRuns, imageSet, delay, npunch) => {
   };
 
   const generatePunches = (minPunches, maxPunches) => {
-    const x = Math.floor(Math.random() * (maxPunches - minPunches + 1)) + minPunches;
-    return x;
+    return Math.floor(Math.random() * (maxPunches - minPunches + 1)) + minPunches;
   };
   //cp this
 
@@ -270,7 +271,6 @@ const handleImageUpdate = (maxRuns, imageSet, delay, npunch) => {
         ({minPunches, maxPunches, imageArr_p1, imageArr_p2} = wif == 1 ? PunchesConfig[0] : wif < 41 ? PunchesConfig[1] : PunchesConfig[2]);
         const randPunches = generatePunches(minPunches, maxPunches);
 
-        //refactor this
         if (player === 'ansem'){
           setFlipImages(false);
           setCurrentImageArray(imageArr_p1);
@@ -299,7 +299,7 @@ const handleImageUpdate = (maxRuns, imageSet, delay, npunch) => {
   return (
     <>
       <div ref={containerRef} className="image-container relative">
-        <img src={currentImageArray[currentImageIndex]} alt="Game character" className={`${flipImages ? "scale-x-[-1]" : "scale-x-1"}`}/>
+        <img src={currentImageArray[currentImageIndex]} alt="Game character" className={`${flipImages ? "scale-x-[-1]" : ""}`}/>
         
       </div>
       <h1 className="custom-heading text-[61px] text-[#2196F3]">Ansem vs. Cook</h1>
