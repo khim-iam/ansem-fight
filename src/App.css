@@ -31,10 +31,8 @@
 }
 
 .custom-heading {
-  font-family: '8bit', sans-serif;
-
+  font-family: "8bit", sans-serif;
 }
-
 
 @keyframes logo-spin {
   from {
@@ -46,10 +44,9 @@
 }
 
 @font-face {
-  font-family: '8bit';
-  src: url('./assets/8-bit.ttf') format('truetype');
+  font-family: "8bit";
+  src: url("./assets/8-bit.ttf") format("truetype");
 }
-
 
 @media (prefers-reduced-motion: no-preference) {
   a:nth-of-type(2) .logo {
