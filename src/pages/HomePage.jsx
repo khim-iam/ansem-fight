@@ -162,6 +162,7 @@ function HomePage() {
   };
   const handleImageUpdate = (maxRuns, imageSet, delay, npunch) => {
     let runCount = 0;
+    // let numPunchesBeforeT3 = imageSet === imageSets.t3 ? Math.random() * 10 : 0;
     clearInterval(intervalRef.current);
     const id = setInterval(
       async () => {
@@ -223,16 +224,25 @@ function HomePage() {
           imageSet === imageSets.ansem_t3 ||
           imageSet === imageSets.cook_t3
         ) {
-          const doges = Math.random() < dogeProbs.t3 ? true : false;
-          if (doges) {
-            currentImages =
-              player === "ansem"
-                ? Math.random() < 0.5
-                  ? imageSets.ansem_doge_1
-                  : imageSets.ansem_doge_2
-                : Math.random() < 0.5
-                  ? imageSets.cook_doge_1
-                  : imageSets.cook_doge_2;
+          if (runCount + 1 !== maxRuns){
+            const doges = Math.random() < dogeProbs.t3 ? true : false;
+            currentImages = Math.random() > 0.5 ? 
+                              player === "ansem" 
+                                ? imageSets.ansem_t1 
+                                : imageSets.cook_t1 
+                              : player === "ansem" 
+                                ? imageSets.ansem_t2 
+                                : imageSets.cook_t2;
+            if (doges) {
+              currentImages =
+                player === "ansem"
+                  ? Math.random() < 0.5
+                    ? imageSets.ansem_doge_1
+                    : imageSets.ansem_doge_2
+                  : Math.random() < 0.5
+                    ? imageSets.cook_doge_1
+                    : imageSets.cook_doge_2;
+            }
           }
         }
 
@@ -286,15 +296,14 @@ function HomePage() {
           );
         }
 
-        if (
-          (currentImages &&
-            currentImages[currentImages.length - 1] === upansemPunch) ||
-          currentImages[currentImages.length - 1] === t3_cook_win
-        ) {
-          runCount = maxRuns;
-        } else {
-          runCount++;
-        }
+        // if (
+        //   currentImages &&
+        //   ((currentImages[currentImages.length - 1] === upansemPunch) ||
+        //   (currentImages[currentImages.length - 1] === t3_cook_win))
+        // ) {
+        //   runCount = maxRuns;
+        // }
+        runCount++
       },
       delay / SPEED + 2000 / SPEED,
     );
@@ -321,7 +330,7 @@ function HomePage() {
 
   const generatePunches = (minPunches, maxPunches) => {
     return (
-      Math.floor(Math.random() * (maxPunches - minPunches + 1)) + minPunches
+      (Math.floor(Math.random() * (maxPunches - minPunches + 1)) + minPunches)
     );
   };
   //cp this
