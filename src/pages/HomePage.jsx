@@ -77,8 +77,8 @@ const PunchesConfig = [
     imageArr_p2: imageSets.cook_t2,
   },
   {
-    minPunches: 51,
-    maxPunches: 100,
+    minPunches: 36,
+    maxPunches: 60,
     imageArr_p1: imageSets.ansem_t3,
     imageArr_p2: imageSets.cook_t3,
   },
