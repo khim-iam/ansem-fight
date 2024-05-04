@@ -263,7 +263,7 @@ function HomePage() {
                 currentImages[i] === cook_doge_2
               ) {
                 setFlipImages(false);
-              } else if (player === "cook") {
+              } else if (player === "kook") {
                 setFlipImages(true); // Reset flip for cook
               }
               if (
@@ -358,7 +358,7 @@ function HomePage() {
           setFlipImages(false);
           setCurrentImageArray(imageArr_p1);
           handleImageUpdate(randPunches, imageArr_p1, 0, randPunches);
-        } else if (player === "cook") {
+        } else if (player === "kook") {
           setFlipImages(true);
           setCurrentImageArray(imageArr_p2);
           handleImageUpdate(randPunches, imageArr_p2, 0, randPunches);
@@ -388,7 +388,7 @@ function HomePage() {
         />
       </div>
       <h1 className="custom-heading text-[61px] text-[#2196F3]">
-        Ansem vs. Cook
+        Ansem vs. Kook
       </h1>
       <div className="card custom-heading text-[30px]">
         {/* cp this */}
@@ -407,11 +407,11 @@ function HomePage() {
             <label>
               <input
                 type="radio"
-                value="cook"
-                checked={player === "cook"}
+                value="kook"
+                checked={player === "kook"}
                 onChange={handlePlayerChange}
               ></input>{" "}
-              Cook
+              Kook
             </label>
           </div>
         </div>
@@ -423,7 +423,7 @@ function HomePage() {
             disabled={buttomPressed}
             onClick={handleDeposit}
           >
-            Deposit WIFs
+            Deposit WIF
           </div>
         </div>
         <p>WIF Deposited: {wifAmount}</p>
