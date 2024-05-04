@@ -44,10 +44,10 @@ const imageSets = {
   cook_t1: [ansemPunch, opponent_t1],
   cook_t2: [ansemPunch, opponent_t1, opponent_t2],
   cook_t3: [ansemPunch, cook_t3_pwrup, t3_cook_win],
-  cook_doge_1: [ansemPunch, cook_doge_1, t1ansemPunch],
-  cook_doge_2: [ansemPunch, cook_doge_2, t2ansemPunch],
-  ansem_doge_1: [ansemPunch, ansem_doge_1, opponent_t1],
-  ansem_doge_2: [ansemPunch, ansem_doge_2, opponent_t2],
+  cook_doge_1: [ansemPunch, cook_doge_1, cook_doge_1, cook_doge_1, cook_doge_1, cook_doge_1, t1ansemPunch],
+  cook_doge_2: [ansemPunch, cook_doge_2, cook_doge_2, cook_doge_2, cook_doge_2, cook_doge_2, t2ansemPunch],
+  ansem_doge_1: [ansemPunch, ansem_doge_1, ansem_doge_1, ansem_doge_1, ansem_doge_1, ansem_doge_1, opponent_t1],
+  ansem_doge_2: [ansemPunch, ansem_doge_2, ansem_doge_2, ansem_doge_2, ansem_doge_2, ansem_doge_2, opponent_t2],
   default: [ansem, ansemPunch, t1ansemPunch],
   result_ansem: [loseImage, winImage],
   result_cook: [loseImage_cook, t3_cook_win],
@@ -77,8 +77,8 @@ const PunchesConfig = [
     imageArr_p2: imageSets.cook_t2,
   },
   {
-    minPunches: 36,
-    maxPunches: 60,
+    minPunches: 35,
+    maxPunches: 50,
     imageArr_p1: imageSets.ansem_t3,
     imageArr_p2: imageSets.cook_t3,
   },
@@ -176,7 +176,9 @@ function HomePage() {
           );
           setCurrentImageIndex(npunch > 35 ? 1 : 0);
           playSound(npunch > 35 ? SoundTypes.WIN : SoundTypes.LOSE);
-          playSound(SoundTypes.PUNCH);
+          if (!(imageSet === imageSets.cook_t3 || imageSet === imageSets.ansem_t3)){
+            playSound(SoundTypes.PUNCH);
+          }
           handleDefault();
           // resume background music
           setButtonPressed(false);
@@ -272,14 +274,10 @@ function HomePage() {
               ) {
                 soundRef.current.tier3.play();
               } else if (
-                i > 0 &&
-                !(
-                  (currentImages === imageSets.ansem_doge_1 ||
-                    currentImages === imageSets.ansem_doge_2 ||
-                    currentImages === imageSets.cook_doge_2 ||
-                    currentImages === imageSets.cook_doge_2) &&
-                  i === 1
-                )
+                !(currentImages[i] === ansem_doge_1 ||
+                currentImages[i] === ansem_doge_2 ||
+                currentImages[i] === cook_doge_1 ||
+                currentImages[i] === cook_doge_2 || currentImages[i] === ansemPunch)
               ) {
                 // Play punch sound for all but the last image
                 setTimeout(() => playSound(SoundTypes.PUNCH), 2 / SPEED);
@@ -287,22 +285,15 @@ function HomePage() {
               }
               setCurrentImageIndex(i);
             },
-            (i / SPEED) *
-              ((currentImages[i] === imageSets.ansem_t3 ||
-                currentImages === imageSets.cook_t3) &&
-              i === 2
+            (i % 4 / SPEED) *
+              ((currentImages[i] === upansemPunch ||
+                currentImages[i] === t3_cook_win)
                 ? 800 / SPEED
                 : 750 / SPEED),
           );
         }
 
-        // if (
-        //   currentImages &&
-        //   ((currentImages[currentImages.length - 1] === upansemPunch) ||
-        //   (currentImages[currentImages.length - 1] === t3_cook_win))
-        // ) {
-        //   runCount = maxRuns;
-        // }
+
         runCount++
       },
       delay / SPEED + 2000 / SPEED,
