@@ -1,3 +1,18 @@
+import { useMemo } from "react";
+import {
+  useWallet,
+} from "@solana/wallet-adapter-react";
+import {
+  WalletMultiButton,
+} from "@solana/wallet-adapter-react-ui";
+//import { useWallet } from '@solana/wallet-adapter-react';
+
+// Function to shorten wallet addresses
+const shortenAddress = (address) => {
+  return `${address.slice(0, 4)}...${address.slice(-4)}`;
+};
+
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Howl } from 'howler';
 import ansem from '../assets/start.png'; 
@@ -25,6 +40,20 @@ import loseImage_cook from '../assets/lose_cook.png';
 import winImage_cook from '../assets/win_cook.png';
 import cook_t3_pwrup from '../assets/t33_rev.png';
 import t3_cook_win from '../assets/t3_cook_win.png';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 const SoundTypes = {
   PUNCH: 'punch',
   WIN: 'win',
@@ -83,7 +112,23 @@ const PunchesConfig = [{
   imageArr_p2: imageSets.cook_t3
 }];
 const SPEED = 2;
+
+
+
+
+
 function HomePage() {
+
+
+
+
+
+  
+    const wallet = useWallet();
+
+
+
+
   const [wifAmount, setWifAmount] = useState(0);
   const [punches, setPunches] = useState(0);
   const [currentImageArray, setCurrentImageArray] = useState(imageSets.default);
@@ -259,8 +304,30 @@ const handleImageUpdate = (maxRuns, imageSet, delay, npunch) => {
 
   
   const handleDeposit = () => {
+
+    if (!(wallet.connected)) { // Check if wallet is connected
+      alert("Please connect wallet.");
+      return;
+    }
+
+    if (!player) { // Check if player is selected
+      alert("Please select a player.");
+      return;
+    }
+
     const inputWif = prompt("Enter WIF amount (positive number):");
     const wif = Number(inputWif);
+    //console.log(wif);
+
+
+
+
+
+    if (isNaN(wif) || wif <= 0) {
+      alert("Please enter a positive number for WIF amount."); // Alert for invalid input
+      return;
+    }
+
     if ((!isNaN(wif) && wif > 0) && (player)) {
       setButtonPressed(true);
       playSound(SoundTypes.BELL);
@@ -294,15 +361,22 @@ const handleImageUpdate = (maxRuns, imageSet, delay, npunch) => {
   const handlePlayerChange = (event) => {
     setPlayer(event.target.value)
   }
-  
+ 
 
   return (
     <>
+
+
+
       <div ref={containerRef} className="image-container relative">
         <img src={currentImageArray[currentImageIndex]} alt="Game character" className={`${flipImages ? "scale-x-[-1]" : ""}`}/>
         
       </div>
+
+
+
       <h1 className="custom-heading text-[61px] text-[#2196F3]">Ansem vs. Cook</h1>
+   
       <div className="card custom-heading text-[30px]">
         
         {/* cp this */}
@@ -326,6 +400,18 @@ const handleImageUpdate = (maxRuns, imageSet, delay, npunch) => {
           <div className={`pixel2 custom-heading text-[36px] ${buttomPressed ? "cursor-none" : ""}`} ref={depositButtonRef} disabled={buttomPressed} onClick={handleDeposit}>
             Deposit WIFs
           </div>
+
+          <div className="wallet-section">
+        <WalletMultiButton />
+        <div className="wallet-status">
+          {wallet.connected ? (
+            <p>Connected: {shortenAddress(wallet.publicKey.toBase58())}</p>
+          ) : (
+            <p>Wallet not connected</p>
+          )}
+        </div>
+      </div>
+
         </div>
         <p>WIF Deposited: {wifAmount}</p>
         <p>Punches Landed: {punches}</p>
