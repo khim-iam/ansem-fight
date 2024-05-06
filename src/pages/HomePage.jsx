@@ -173,6 +173,55 @@ function HomePage() {
     setPunches(0);
   };
 
+  const render = (currentImages) => {
+    for (let i = 0; i < currentImages.length; i++) {
+      setTimeout(
+        () => {
+          //excluding doge sequence from flip
+          if (
+            currentImages[i] === cook_t3_pwrup ||
+            currentImages[i] === t3_cook_win
+          ) {
+            setFlipImages(false); // Set flip images to false
+          } else if (
+            currentImages[i] === ansem_doge_1 ||
+            currentImages[i] === ansem_doge_2 ||
+            currentImages[i] === cook_doge_1 ||
+            currentImages[i] === cook_doge_2
+          ) {
+            setFlipImages(false);
+          } else if (player === "kook") {
+            setFlipImages(true); // Reset flip for cook
+          }
+
+          if (
+            currentImages[i] === t3ansemPunch ||
+            currentImages[i] === cook_t3_pwrup
+          ) {
+            soundRef.current.tier3.play();
+          } else if (
+            !(
+              currentImages[i] === ansem_doge_1 ||
+              currentImages[i] === ansem_doge_2 ||
+              currentImages[i] === cook_doge_1 ||
+              currentImages[i] === cook_doge_2 ||
+              currentImages[i] === ansemPunch
+            )
+          ) {
+            // Play punch sound for all but the last image
+            setTimeout(() => playSound(SoundTypes.PUNCH), 2 / SPEED);
+            setPunches((p) => p + 1);
+          }
+          setCurrentImageIndex(i);
+        },
+        ((i % 4) / SPEED) *
+          (currentImages[i] === upansemPunch ||
+          currentImages[i] === t3_cook_win
+            ? 800 / SPEED
+            : 750 / SPEED),
+      );
+    }
+  }
   const randomizeAndSetPunchSequence = (imageSet, runCount, maxRuns) => {
     let currentImages = [...imageSet];
 
@@ -254,54 +303,9 @@ function HomePage() {
         );
 
         setCurrentImageArray(currentImages);
-        for (let i = 0; i < currentImages.length; i++) {
-          setTimeout(
-            () => {
-              //excluding doge sequence from flip
-              if (
-                currentImages[i] === cook_t3_pwrup ||
-                currentImages[i] === t3_cook_win
-              ) {
-                setFlipImages(false); // Set flip images to false
-              } else if (
-                currentImages[i] === ansem_doge_1 ||
-                currentImages[i] === ansem_doge_2 ||
-                currentImages[i] === cook_doge_1 ||
-                currentImages[i] === cook_doge_2
-              ) {
-                setFlipImages(false);
-              } else if (player === "kook") {
-                setFlipImages(true); // Reset flip for cook
-              }
 
-              if (
-                currentImages[i] === t3ansemPunch ||
-                currentImages[i] === cook_t3_pwrup
-              ) {
-                soundRef.current.tier3.play();
-              } else if (
-                !(
-                  currentImages[i] === ansem_doge_1 ||
-                  currentImages[i] === ansem_doge_2 ||
-                  currentImages[i] === cook_doge_1 ||
-                  currentImages[i] === cook_doge_2 ||
-                  currentImages[i] === ansemPunch
-                )
-              ) {
-                // Play punch sound for all but the last image
-                setTimeout(() => playSound(SoundTypes.PUNCH), 2 / SPEED);
-                setPunches((p) => p + 1);
-              }
-              setCurrentImageIndex(i);
-            },
-            ((i % 4) / SPEED) *
-              (currentImages[i] === upansemPunch ||
-              currentImages[i] === t3_cook_win
-                ? 800 / SPEED
-                : 750 / SPEED),
-          );
-        }
-
+        render(currentImages);
+        
         runCount++;
       },
       delay / SPEED + 2000 / SPEED,
