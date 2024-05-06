@@ -27,6 +27,10 @@ import ansem_doge_1 from "../assets/doge_1.png";
 import ansem_doge_2 from "../assets/doge_2.png";
 import cook_t3_pwrup from "../assets/t33_rev.png";
 import t3_cook_win from "../assets/t3_cook_win.png";
+import t1ansemPunch from "../assets/T1-Ansem-Punch2.png";
+import t2ansemPunch from "../assets/Tier_22.png";
+import opponent_t1 from "../assets/cook_punch_t1.png";
+import opponent_t2 from "../assets/cook_punch_t2.png";
 
 function HomePage() {
   const containerRef = useRef(null);
@@ -126,14 +130,14 @@ function HomePage() {
       setWifAmount(wif);
       let minPunches, maxPunches, imageArr_p1, imageArr_p2;
 
-      if (wif >= 1) {
+      if (wif > 0) {
         // removed the condition wif <= 40
         ({ minPunches, maxPunches, imageArr_p1, imageArr_p2 } =
-          wif == 1
-            ? PunchesConfig[0]
+          wif <= 1
+            ? PunchesConfig[0] // t1
             : wif < 41
-              ? PunchesConfig[1]
-              : PunchesConfig[2]);
+              ? PunchesConfig[1] // t2
+              : PunchesConfig[2]); // t3
         const randPunches = generatePunches(minPunches, maxPunches);
 
         if (player === "ansem") {
@@ -210,7 +214,13 @@ function HomePage() {
           ) {
             // Play punch sound for all but the last image
             setTimeout(() => playSound(SoundTypes.PUNCH), 2 / SPEED);
-            setPunches((p) => p + 1);
+            if((
+              player === "kook" && !(currentImages[i] === t1ansemPunch ||currentImages[i] === t2ansemPunch)
+            ) || (
+              player==="ansem" && !(currentImages[i] === opponent_t1 || currentImages[i] === opponent_t2)
+            )){
+              setPunches((p) => p + 1);
+            }
           }
           setCurrentImageIndex(i);
         },
@@ -305,7 +315,7 @@ function HomePage() {
         setCurrentImageArray(currentImages);
 
         render(currentImages);
-        
+
         runCount++;
       },
       delay / SPEED + 2000 / SPEED,
