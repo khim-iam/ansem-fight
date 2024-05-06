@@ -348,7 +348,7 @@ function HomePage() {
       <h1 className="custom-heading text-[61px] text-[#2196F3]">
         Ansem vs. Kook
       </h1>
-      <div className="card custom-heading text-[30px]">
+      <div className="card custom-heading text-[30px] space-y-2">
         <CharacterSelection
           player={player}
           onPlayerChange={(e) => setPlayer(e.target.value)}
