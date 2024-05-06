@@ -31,7 +31,11 @@ import t1ansemPunch from "../assets/T1-Ansem-Punch2.png";
 import t2ansemPunch from "../assets/Tier_22.png";
 import opponent_t1 from "../assets/cook_punch_t1.png";
 import opponent_t2 from "../assets/cook_punch_t2.png";
-
+import GameOverPopup from "./GameOverPopUp";
+import { FaSquareXTwitter } from "react-icons/fa6";
+import winImage from "../assets/win.png";
+import loseImage from "../assets/lose.png";
+import loseImage_cook from "../assets/lose_cook.png";
 function HomePage() {
   const containerRef = useRef(null);
 
@@ -51,6 +55,9 @@ function HomePage() {
   const [flipImages, setFlipImages] = useState(false);
   const [wifAmount, setWifAmount] = useState(0);
   const [buttonPressed, setButtonPressed] = useState(false);
+  const [tweetImage, setTweetImage] = useState(t3_cook_win);
+  const [isOpen, setIsOpen] = useState(false);
+  const [SNSlink, setSNSLink] = useState("");
   const playSound = (soundType, forcePlay = false) => {
     if (soundType === "background" && soundRef.current[soundType].playing()) {
       return;
@@ -162,7 +169,6 @@ function HomePage() {
     clearInterval(intervalRef.current);
     intervalRef.current = null;
     setFlipImages(false);
-    setPlayer(null);
     setCurrentImageArray(
       player === "ansem" ? imageSets.result_ansem : imageSets.result_cook,
     );
@@ -171,6 +177,14 @@ function HomePage() {
     if (!(imageSet === imageSets.cook_t3 || imageSet === imageSets.ansem_t3)) {
       playSound(SoundTypes.PUNCH);
     }
+
+    setSNSLink(generateLink(npunch));
+    setTimeout(() => {
+      setIsOpen(true);
+    }, 1500);
+    
+    setTweetImage(npunch > 35 ? player === "ansem" ? winImage : t3_cook_win : player==="kook" ? loseImage : loseImage_cook);
+    setPlayer(null);
     handleDefault();
     // resume background music
     setButtonPressed(false);
@@ -347,8 +361,24 @@ function HomePage() {
     );
   };
 
+  const openPopUp = () => {
+    setIsOpen(true);
+  };
+
+  const closePopUp = () => {
+    setIsOpen(false);
+    setSNSLink("");
+  };
+
+  const generateLink = (npunch) => {
+    const text = `I landed ${npunch} punches and donated ${wifAmount} !!!!`;
+    return `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&image=${tweetImage}`
+  }
   return (
     <>
+      <div>
+      <GameOverPopup isOpen={isOpen} onClose={closePopUp} image={tweetImage} link={SNSlink} />
+    </div>
       <GameImage
         currentImageArray={currentImageArray}
         currentImageIndex={currentImageIndex}

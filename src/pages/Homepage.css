@@ -9,7 +9,12 @@
   object-position: center;
   position: relative;
 }
-
+.image-container2{
+  background-image: url("../assets/Background.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
 .image-container img {
   width: 100%;
   height: 100%;
@@ -24,7 +29,22 @@
 .cameraShake {
   animation: shake 0.1s cubic-bezier(0.36, 0.07, 0.19, 0.97);
 }
+.loaded .relative {
+  animation: shutter 1s cubic-bezier(0.075, 0.82, 0.165, 1) both;
+  transform-origin: top;
+}
 
+@keyframes shutter {
+  0% {
+    transform: scaleY(0);
+  }
+  40% {
+    transform: scaleY(1.1);
+  }
+  100% {
+    transform: scaleY(1);
+  }
+}
 @keyframes shake {
   10% {
     transform: translate(4px, -4px);
@@ -78,7 +98,41 @@
   text-transform: uppercase;
   transition: transform 0.4s ease; /* Apply the transition to the transform property */
 }
+.pixel3{
+  color: black;
+  display: inline-block;
+  background: white;
+}
 
+.pixel3:active {
+  transform: scale(
+    0.95
+  ); /* Scales down the button to 95% of its original size */
+}
+
+.pixel3::before {
+  content: "";
+  display: block;
+  position: absolute;
+  top: 12px;
+  bottom: 12px;
+  left: -11px;
+  right: -11px;
+  background: white;
+  z-index: -1;
+}
+
+.pixel3::after {
+  content: "";
+  display: block;
+  position: absolute;
+  top: 6px;
+  bottom: 6px;
+  left: -6px;
+  right: -6px;
+  background: white;
+  z-index: -1;
+}
 .pixel2:active {
   transform: scale(
     0.95

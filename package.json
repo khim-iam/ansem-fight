@@ -19,7 +19,8 @@
     "jimp": "^0.22.12",
     "pixi.js": "^8.1.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-icons": "^5.2.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.66",
