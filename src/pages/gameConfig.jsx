@@ -26,19 +26,6 @@ import winImage_cook from "../assets/win_cook.png";
 import cook_t3_pwrup from "../assets/t33_rev.png";
 import t3_cook_win from "../assets/t3_cook_win.png";
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 const SoundTypes = {
   PUNCH: "punch",
   WIN: "win",
@@ -58,10 +45,42 @@ const imageSets = {
   cook_t1: [ansemPunch, opponent_t1],
   cook_t2: [ansemPunch, opponent_t1, opponent_t2],
   cook_t3: [ansemPunch, cook_t3_pwrup, t3_cook_win],
-  cook_doge_1: [ansemPunch, cook_doge_1, cook_doge_1, cook_doge_1, cook_doge_1, cook_doge_1, t1ansemPunch],
-  cook_doge_2: [ansemPunch, cook_doge_2, cook_doge_2, cook_doge_2, cook_doge_2, cook_doge_2, t2ansemPunch],
-  ansem_doge_1: [ansemPunch, ansem_doge_1, ansem_doge_1, ansem_doge_1, ansem_doge_1, ansem_doge_1, opponent_t1],
-  ansem_doge_2: [ansemPunch, ansem_doge_2, ansem_doge_2, ansem_doge_2, ansem_doge_2, ansem_doge_2, opponent_t2],
+  cook_doge_1: [
+    ansemPunch,
+    cook_doge_1,
+    cook_doge_1,
+    cook_doge_1,
+    cook_doge_1,
+    cook_doge_1,
+    t1ansemPunch,
+  ],
+  cook_doge_2: [
+    ansemPunch,
+    cook_doge_2,
+    cook_doge_2,
+    cook_doge_2,
+    cook_doge_2,
+    cook_doge_2,
+    t2ansemPunch,
+  ],
+  ansem_doge_1: [
+    ansemPunch,
+    ansem_doge_1,
+    ansem_doge_1,
+    ansem_doge_1,
+    ansem_doge_1,
+    ansem_doge_1,
+    opponent_t1,
+  ],
+  ansem_doge_2: [
+    ansemPunch,
+    ansem_doge_2,
+    ansem_doge_2,
+    ansem_doge_2,
+    ansem_doge_2,
+    ansem_doge_2,
+    opponent_t2,
+  ],
   default: [ansem, ansemPunch, t1ansemPunch],
   result_ansem: [loseImage, winImage],
   result_cook: [loseImage_cook, t3_cook_win],
@@ -99,4 +118,4 @@ const PunchesConfig = [
 ];
 const SPEED = 2;
 
-export {SoundTypes, dogeProbs, imageSets, sounds, PunchesConfig, SPEED};
+export { SoundTypes, dogeProbs, imageSets, sounds, PunchesConfig, SPEED };

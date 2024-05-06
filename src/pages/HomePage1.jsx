@@ -12,7 +12,6 @@
 //   return `${address.slice(0, 4)}...${address.slice(-4)}`;
 // };
 
-
 // import React, { useState, useEffect, useRef } from "react";
 // import { Howl } from "howler";
 // import ansem from "../assets/start.png";
@@ -40,19 +39,6 @@
 // import winImage_cook from "../assets/win_cook.png";
 // import cook_t3_pwrup from "../assets/t33_rev.png";
 // import t3_cook_win from "../assets/t3_cook_win.png";
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // const SoundTypes = {
 //   PUNCH: "punch",
@@ -114,21 +100,9 @@
 // ];
 // const SPEED = 2;
 
-
-
-
-
 // function HomePage() {
 
-
-
-
-
-  
 //     const wallet = useWallet();
-
-
-
 
 //   const [wifAmount, setWifAmount] = useState(0);
 //   const [punches, setPunches] = useState(0);
@@ -273,12 +247,12 @@
 //         ) {
 //           if (runCount + 1 !== maxRuns){
 //             const doges = Math.random() < dogeProbs.t3 ? true : false;
-//             currentImages = Math.random() > 0.5 ? 
-//                               player === "ansem" 
-//                                 ? imageSets.ansem_t1 
-//                                 : imageSets.cook_t1 
-//                               : player === "ansem" 
-//                                 ? imageSets.ansem_t2 
+//             currentImages = Math.random() > 0.5 ?
+//                               player === "ansem"
+//                                 ? imageSets.ansem_t1
+//                                 : imageSets.cook_t1
+//                               : player === "ansem"
+//                                 ? imageSets.ansem_t2
 //                                 : imageSets.cook_t2;
 //             if (doges) {
 //               currentImages =
@@ -338,7 +312,6 @@
 //           );
 //         }
 
-
 //         runCount++
 //       },
 //       delay / SPEED + 2000 / SPEED,
@@ -387,10 +360,6 @@
 //     const wif = Number(inputWif);
 //     //console.log(wif);
 
-
-
-
-
 //     if (isNaN(wif) || wif <= 0) {
 //       alert("Please enter a positive number for WIF amount."); // Alert for invalid input
 //       return;
@@ -438,8 +407,6 @@
 
 //   return (
 //     <>
-
-
 
 //       <div ref={containerRef} className="image-container relative">
 //         <img
