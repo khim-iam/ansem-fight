@@ -130,11 +130,14 @@ function HomePage() {
       alert("Please enter a positive number for WIF amount."); // Alert for invalid input
       return;
     }
+    // setWifAmount(wif);
+    // console.log(wifAmount);
 
     if (!isNaN(wif) && wif > 0 && player) {
       setButtonPressed(true);
       playSound(SoundTypes.BELL);
       setWifAmount(wif);
+      console.log(wifAmount);
       let minPunches, maxPunches, imageArr_p1, imageArr_p2;
 
       if (wif > 0) {
@@ -150,11 +153,11 @@ function HomePage() {
         if (player === "ansem") {
           setFlipImages(false);
           setCurrentImageArray(imageArr_p1);
-          handleImageUpdate(randPunches, imageArr_p1, 0, randPunches);
+          handleImageUpdate(randPunches, imageArr_p1, 0, randPunches, wif);
         } else if (player === "kook") {
           setFlipImages(true);
           setCurrentImageArray(imageArr_p2);
-          handleImageUpdate(randPunches, imageArr_p2, 0, randPunches);
+          handleImageUpdate(randPunches, imageArr_p2, 0, randPunches, wif);
         }
       } else if (isNaN(wif) || !wif > 0) {
         alert("Please enter a positive number for WIF amount.");
@@ -165,7 +168,7 @@ function HomePage() {
       }
     }
   };
-  const cleanup = (imageSet, npunch) => {
+  const cleanup = (imageSet, npunch, wifAmount2) => {
     clearInterval(intervalRef.current);
     intervalRef.current = null;
     setFlipImages(false);
@@ -178,7 +181,7 @@ function HomePage() {
       playSound(SoundTypes.PUNCH);
     }
 
-    setSNSLink(generateLink(npunch));
+    setSNSLink(generateLink(npunch, wifAmount2));
     setTimeout(() => {
       setIsOpen(true);
     }, 1500);
@@ -309,14 +312,14 @@ function HomePage() {
     return currentImages;
   };
 
-  const handleImageUpdate = (maxRuns, imageSet, delay, npunch) => {
+  const handleImageUpdate = (maxRuns, imageSet, delay, npunch, wifAmount3) => {
     let runCount = 0;
     clearInterval(intervalRef.current);
     const id = setInterval(
       async () => {
         if (runCount >= maxRuns) {
           //cleanup
-          cleanup(imageSet, npunch);
+          cleanup(imageSet, npunch, wifAmount3);
           return;
         }
 
@@ -370,8 +373,8 @@ function HomePage() {
     setSNSLink("");
   };
 
-  const generateLink = (npunch) => {
-    const text = `I landed ${npunch} punches and donated ${wifAmount} !!!!`;
+  const generateLink = (npunch, wifAmount1) => {
+    const text = `I landed ${npunch} punches and donated ${wifAmount1} !!!!`;
     return `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&image=${tweetImage}`
   }
   return (
