@@ -58,6 +58,7 @@ function HomePage() {
   const [tweetImage, setTweetImage] = useState(t3_cook_win);
   const [isOpen, setIsOpen] = useState(false);
   const [SNSlink, setSNSLink] = useState("");
+  const [doges, setDoges] = useState(0);
   const playSound = (soundType, forcePlay = false) => {
     if (soundType === "background" && soundRef.current[soundType].playing()) {
       return;
@@ -192,6 +193,7 @@ function HomePage() {
     // resume background music
     setButtonPressed(false);
     setPunches(0);
+    setDoges(0);
   };
 
   const render = (currentImages) => {
@@ -237,11 +239,13 @@ function HomePage() {
               player==="ansem" && !(currentImages[i] === opponent_t1 || currentImages[i] === opponent_t2)
             )){
               setPunches((p) => p + 1);
+            }else{
+              setDoges((d) => d + 1);
             }
           }
           setCurrentImageIndex(i);
         },
-        ((i % 4) / SPEED) *
+        ((i % 4)) *
           (currentImages[i] === upansemPunch ||
           currentImages[i] === t3_cook_win
             ? 800 / SPEED
@@ -377,6 +381,9 @@ function HomePage() {
     const text = `I landed ${npunch} punches and donated ${wifAmount1} !!!!`;
     return `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&image=${tweetImage}`
   }
+  const shortenAddress = (address) => {
+    return `${address.slice(0, 4)}...${address.slice(-4)}`;
+  };
   return (
     <>
       <div>
@@ -387,19 +394,29 @@ function HomePage() {
         currentImageIndex={currentImageIndex}
         flipImages={flipImages}
         containerRef={containerRef}
+        punches={punches}
+        onDeposit={handleDeposit}
+        player={player}
+        setPlayer = {setPlayer}
       />
       <h1 className="custom-heading text-[61px] text-[#2196F3]">
         Ansem vs. Kook
       </h1>
-      <div className="card custom-heading text-[30px] space-y-2">
-        <CharacterSelection
+      <div className="card custom-heading text-[30px]">
+        {/* <CharacterSelection
           player={player}
           onPlayerChange={(e) => setPlayer(e.target.value)}
-        />
-        <DepositButton onDeposit={handleDeposit} isDisabled={buttonPressed} />
-        <WalletSection wallet={wallet} />
+        /> */}
+        {/* <DepositButton onDeposit={handleDeposit} isDisabled={buttonPressed} /> */}
+        {/* <WalletSection wallet={wallet} /> */}
         <p>WIF Deposited: {wifAmount}</p>
-        <p>Punches Landed: {punches}</p>
+      </div>
+      <div className="wallet-status custom-heading text-4xl z-30">
+        {wallet.connected ? (
+          <p>Connected: {shortenAddress(wallet.publicKey.toBase58())}</p>
+        ) : (
+          <p>Wallet not connected</p>
+        )}
       </div>
       <Leaderboard leaderboard={leaderboard} />
     </>

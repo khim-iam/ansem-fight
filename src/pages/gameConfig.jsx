@@ -99,19 +99,19 @@ const sounds = {
 const PunchesConfig = [
   {
     minPunches: 1,
-    maxPunches: 15,
+    maxPunches: 6,
     imageArr_p1: imageSets.ansem_t1,
     imageArr_p2: imageSets.cook_t1,
   },
   {
-    minPunches: 16,
-    maxPunches: 50,
+    minPunches: 9,
+    maxPunches: 16,
     imageArr_p1: imageSets.ansem_t2,
     imageArr_p2: imageSets.cook_t2,
   },
   {
-    minPunches: 35,
-    maxPunches: 50,
+    minPunches: 17,
+    maxPunches: 24,
     imageArr_p1: imageSets.ansem_t3,
     imageArr_p2: imageSets.cook_t3,
   },

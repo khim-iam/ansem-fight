@@ -8,6 +8,7 @@
   object-fit: cover;
   object-position: center;
   position: relative;
+  z-index: 100;
 }
 .image-container2{
   background-image: url("../assets/Background.png");

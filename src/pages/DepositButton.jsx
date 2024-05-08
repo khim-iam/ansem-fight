@@ -1,10 +1,10 @@
-export default function DepositButton({ onDeposit, isDisabled }) {
+export default function DepositButton({ onDeposit, isDisabled, text }) {
   return (
     <div
-      className={`pixel2 custom-heading text-[36px] ${isDisabled ? "cursor-none" : ""}`}
+      className={`pixel2 px-6 py-0 custom-heading text-[36px] ${isDisabled ? "cursor-none" : ""}`}
       onClick={onDeposit}
     >
-      Deposit WIF
+      {text}
     </div>
   );
 }

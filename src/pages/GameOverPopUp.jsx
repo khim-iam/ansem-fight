@@ -16,7 +16,7 @@ const GameOverPopUp = ({ isOpen, onClose, image, link }) => {
     return (
       <>
         {isOpen && (
-          <div className={`fixed inset-0 flex items-center justify-center z-50 ${isLoaded ? "loaded" : ""}`}>
+          <div className={`fixed inset-0 flex items-center justify-center z-[200] ${isLoaded ? "loaded" : ""}`}>
             <div className="fixed inset-0 bg-gray-800/50" onClick={onClose}></div>
             <div className="pixel3 relative z-50 bg-white px-4 pt-4 pb-6 text-black space-y-2">
                 <h2 className='font-bold custom-heading text-black text-7xl'>Game Over</h2>

@@ -10,15 +10,15 @@ const shortenAddress = (address) => {
 };
 export default function WalletSection({ wallet }) {
   return (
-    <div className="wallet-section">
+    <div className="wallet-section z-40">
       <WalletMultiButton1 />
-      <div className="wallet-status">
+      {/* <div className="wallet-status  z-30">
         {wallet.connected ? (
           <p>Connected: {shortenAddress(wallet.publicKey.toBase58())}</p>
         ) : (
           <p>Wallet not connected</p>
         )}
-      </div>
+      </div> */}
     </div>
   );
 }
