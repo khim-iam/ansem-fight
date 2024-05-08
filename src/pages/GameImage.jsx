@@ -28,9 +28,11 @@ export default function GameImage({
       {characterSelection ? 
         <div className="">
           <CharacterSelection player={player} setPlayer={setPlayer}/>
-          <div className="absolute bottom-8 left-0 right-0 scale-[110%]">
-            <DepositButton text="Start Game" onDeposit={onCharacterSelected} isDisabled={false}/>
-          </div>
+          {/* <div className="absolute bottom-8 left-0 right-0 scale-[110%]">
+            <DepositButton className="" text="Start Game" onDeposit={onCharacterSelected} isDisabled={false}/>
+          </div> */}
+          {/* <DepositButton className="absolute bottom-8 right-[31%]" text="Start Game" onDeposit={onCharacterSelected} isDisabled={false}/> */}
+          <DepositButton className="absolute bottom-8 right-[31.25%]" text="Start Game" onDeposit={onCharacterSelected} isDisabled={false}/>
         </div> 
         :       
         <img

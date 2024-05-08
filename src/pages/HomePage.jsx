@@ -386,9 +386,7 @@ function HomePage() {
   };
   return (
     <>
-      <div>
       <GameOverPopup isOpen={isOpen} onClose={closePopUp} image={tweetImage} link={SNSlink} />
-    </div>
       <GameImage
         currentImageArray={currentImageArray}
         currentImageIndex={currentImageIndex}
