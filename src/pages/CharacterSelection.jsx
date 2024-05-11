@@ -3,11 +3,14 @@ import WalletSection from "./WalletSection";
 import DepositButton from "./DepositButton";
 import ansem from "../assets/StartGame11.png";
 import kook from "../assets/startkook.png";
-export default function CharacterSelection({ player, setPlayer}) {
+import { Context } from "../App";
+import { useContext } from "react";
+export default function CharacterSelection() {
   const wallet = useWallet();
   const onPlayerChange = (e) => {
     setPlayer(e.target.value);
   }
+  const {wifAmount, setWifAmount, player, setPlayer} = useContext(Context);
   return (
     <div className="custom-heading w-full h-0">
       <div className="text-7xl">Choose characters</div>
