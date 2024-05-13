@@ -11,6 +11,7 @@ import {
   sounds,
   PunchesConfig,
   SPEED,
+  WIN_PUNCHES
 } from "./gameConfig"; // Assuming these are extracted to a config file
 import { Howl } from "howler";
 
@@ -153,7 +154,7 @@ export default function GameImage() {
       }
     }
   };
-  const cleanup = (imageSet, npunch, wifAmount2) => {
+  const cleanup = (imageSet, npunch) => {
     clearInterval(intervalRef.current);
     intervalRef.current = null;
     setFlipImages(false);
@@ -161,14 +162,14 @@ export default function GameImage() {
     //   player === "ansem" ? imageSets.result_ansem : imageSets.result_cook,
     // );
     // setCurrentImageIndex(npunch > 35 ? 1 : 0);
-
-    setCurrentImage(player === "ansem" ? imageSets.result_ansem[npunch > 35 ? 1 : 0] : imageSets.result_cook[npunch > 35 ? 1 : 0]);
+    console.log(npunch);
+    setCurrentImage(player === "ansem" ? imageSets.result_ansem[npunch > WIN_PUNCHES ? 1 : 0] : imageSets.result_cook[npunch > WIN_PUNCHES ? 1 : 0]);
     playSound(npunch > 35 ? SoundTypes.WIN : SoundTypes.LOSE);
     if (!(imageSet === imageSets.cook_t3 || imageSet === imageSets.ansem_t3)) {
       playSound(SoundTypes.PUNCH);
     }
 
-    setSNSLink(generateLink(npunch, wifAmount2));
+    setSNSLink(generateLink(npunch));
     setTimeout(() => {
       setIsOpen(true);
     }, 1500);
@@ -303,14 +304,14 @@ export default function GameImage() {
     return currentImages;
   };
 
-  const handleImageUpdate = (maxRuns, imageSet, delay, npunch, wifAmount3) => {
+  const handleImageUpdate = (maxRuns, imageSet, delay, npunch) => {
     let runCount = 0;
     clearInterval(intervalRef.current);
     const id = setInterval(
       async () => {
         if (runCount >= maxRuns) {
           //cleanup
-          cleanup(imageSet, npunch, wifAmount3);
+          cleanup(imageSet, npunch);
           return;
         }
 
@@ -362,8 +363,8 @@ export default function GameImage() {
     setSNSLink("");
   };
 
-  const generateLink = (npunch, wifAmount1) => {
-    const text = `I landed ${npunch} punches and donated ${wifAmount1} !!!!`;
+  const generateLink = (npunch) => {
+    const text = `I landed ${npunch} punches and donated ${wifAmount} !!!!`;
     return `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&image=${tweetImage}`
   }
 

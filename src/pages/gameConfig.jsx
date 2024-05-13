@@ -117,5 +117,5 @@ const PunchesConfig = [
   },
 ];
 const SPEED = 2;
-
-export { SoundTypes, dogeProbs, imageSets, sounds, PunchesConfig, SPEED };
+const WIN_PUNCHES = 13;
+export { SoundTypes, dogeProbs, imageSets, sounds, PunchesConfig, SPEED, WIN_PUNCHES };
