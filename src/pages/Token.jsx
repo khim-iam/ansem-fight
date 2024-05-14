@@ -41,6 +41,37 @@ const Token = () => {
     // const toAddress = '7GVhtvwWeVZxKgXwTexDGtzxXGFcxLzkeXzRS5cRfwmD';
     
     
+    const getOrCreateAssociatedTokenAccount = async (connection,
+      mint,
+      owner) => {
+        const associatedToken = await splToken.getAssociatedTokenAddress(mint, owner);
+
+        let account;
+        try{
+          account = await splToken.getAccount(connection, associatedToken);
+        }catch (error){
+          if (error instanceof splToken.TokenAccountNotFoundError || error instanceof splToken.TokenInvalidAccountOwnerError){
+            try{
+              const transaction = new SolanaWeb3.Transaction().add(
+                splToken.createAssociatedTokenAccountInstruction(
+                  wallet.publicKey,
+                  associatedToken,
+                  owner,
+                  mint
+                )
+              );
+              
+              await wallet.sendTransaction(transaction, connection);
+            }catch(error){
+
+            }
+            account = await splToken.getAccount(connection, associatedToken);
+          }else{
+            throw error;
+          }
+        }
+        return account;
+    }
     const transfer= async (toAddress,amount)=> {
       //if (!wallet.connected || !wallet.publicKey) {
         if (!wallet.connected) {
@@ -51,20 +82,17 @@ const Token = () => {
     const connection = new SolanaWeb3.Connection("https://api.devnet.solana.com/");
     const mintPublicKey = new SolanaWeb3.PublicKey(tokenMintAddress);  
     const {TOKEN_PROGRAM_ID} = splToken;
-    const fromTokenAccount = await splToken.getOrCreateAssociatedTokenAccount(
+    const fromTokenAccount = await getOrCreateAssociatedTokenAccount(
                     connection,
-                    wallet.payer,
                     mintPublicKey,
                     wallet.publicKey
                   );
     const destPublicKey = new SolanaWeb3.PublicKey(toAddress);
-    const associatedDestinationTokenAddr = await splToken.getOrCreateAssociatedTokenAccount(
+    const associatedDestinationTokenAddr = await getOrCreateAssociatedTokenAccount(
                     connection,
-                    wallet.payer,
                     mintPublicKey,
                     destPublicKey
                   );
-    const receiverAccount = await connection.getAccountInfo(associatedDestinationTokenAddr.address);
     //const instructions: solanaWeb3.TransactionInstruction[] = [];
     const instructions = [];
     
@@ -78,9 +106,11 @@ const Token = () => {
                       TOKEN_PROGRAM_ID
                     )
                   );
+    
     const transaction = new SolanaWeb3.Transaction().add(...instructions);
-                  transaction.feePayer = wallet.publicKey;
-                  transaction.recentBlockhash = (await connection.getRecentBlockhash()).blockhash;
+    const blockhash = await connection.getLatestBlockhash();
+    transaction.feePayer = wallet.publicKey;
+    transaction.recentBlockhash = blockhash.blockhash;
     //change1
     const signed = await wallet.signTransaction(transaction);
     const transactionSignature = await connection.sendRawTransaction(
@@ -91,8 +121,13 @@ const Token = () => {
     //                 transaction.serialize(),
     //                 { skipPreflight: true }
     //               );
-                
-                  await connection.confirmTransaction(transactionSignature)
+                  const strategy = {
+                    blockhash: blockhash.blockhash,
+                    lastValidBlockHeight: blockhash.lastValidBlockHeight,
+                    signature: transactionSignature
+                  }
+                  await connection.confirmTransaction(strategy);
+                  console.log("Confirmed");
     }
     
     
