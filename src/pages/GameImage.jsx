@@ -34,6 +34,14 @@ import winImage from "../assets/win.png";
 import loseImage from "../assets/lose.png";
 import loseImage_cook from "../assets/lose_cook.png";
 import { Context } from "../App";
+
+
+
+import "@solana/wallet-adapter-react-ui/styles.css";
+
+import * as SolanaWeb3 from "@solana/web3.js";
+import * as splToken from "@solana/spl-token";
+
 export default function GameImage() {
   const containerRef = useRef(null);
 
@@ -103,7 +111,71 @@ export default function GameImage() {
       soundRef.current.background.stop(); // Stop background sound on unmount
     };
   }, []);
-  const handleDeposit = () => {
+
+//////////////////////////////  TOKEN TRANSFER //////////////////////////////////////////
+
+const tokenMintAddress = 'Gh9ZwEmdLJ8DscKNTkTqPbNwLNNBjuSzaG9Vp2KGtKJr';
+// const toAddress = '7GVhtvwWeVZxKgXwTexDGtzxXGFcxLzkeXzRS5cRfwmD';
+
+
+const transfer= async (toAddress,amount)=> {
+  //if (!wallet.connected || !wallet.publicKey) {
+    if (!wallet.connected) {
+
+    alert("Please connect your wallet first.");
+    return;
+  }
+const connection = new SolanaWeb3.Connection("https://api.devnet.solana.com/");
+const mintPublicKey = new SolanaWeb3.PublicKey(tokenMintAddress);  
+const {TOKEN_PROGRAM_ID} = splToken;
+const fromTokenAccount = await splToken.getOrCreateAssociatedTokenAccount(
+                connection,
+                wallet.payer,
+                mintPublicKey,
+                wallet.publicKey
+              );
+const destPublicKey = new SolanaWeb3.PublicKey(toAddress);
+const associatedDestinationTokenAddr = await splToken.getOrCreateAssociatedTokenAccount(
+                connection,
+                wallet.payer,
+                mintPublicKey,
+                destPublicKey
+              );
+const receiverAccount = await connection.getAccountInfo(associatedDestinationTokenAddr.address);
+//const instructions: solanaWeb3.TransactionInstruction[] = [];
+const instructions = [];
+
+instructions.push(
+                splToken.createTransferInstruction(
+                  fromTokenAccount.address,
+                  associatedDestinationTokenAddr.address,
+                  wallet.publicKey,
+                  amount,
+                  [],
+                  TOKEN_PROGRAM_ID
+                )
+              );
+const transaction = new SolanaWeb3.Transaction().add(...instructions);
+              transaction.feePayer = wallet.publicKey;
+              transaction.recentBlockhash = (await connection.getRecentBlockhash()).blockhash;
+//change1
+const signed = await wallet.signTransaction(transaction);
+const transactionSignature = await connection.sendRawTransaction(
+                signed.serialize(),
+              { skipPreflight: true }
+              );
+// const transactionSignature = await connection.sendRawTransaction(
+//                 transaction.serialize(),
+//                 { skipPreflight: true }
+//               );
+            
+              await connection.confirmTransaction(transactionSignature)
+}
+
+///////////////////////////////////////////////////////////////////////
+
+
+  const handleDeposit = async () => {
     if (!wallet.connected) {
       // Check if wallet is connected
       alert("Please connect wallet.");
@@ -118,13 +190,15 @@ export default function GameImage() {
 
     const inputWif = prompt("Enter WIF amount (positive number):");
     const wif = Number(inputWif);
-
+ 
     if (isNaN(wif) || wif <= 0) {
       alert("Please enter a positive number for WIF amount."); // Alert for invalid input
       return;
     }
 
     if (!isNaN(wif) && wif > 0 && player) {
+      await transfer('7GVhtvwWeVZxKgXwTexDGtzxXGFcxLzkeXzRS5cRfwmD', wif * Math.pow(10, 6));
+
       playSound(SoundTypes.BELL);
       setWifAmount(wif);
       console.log(wifAmount);
@@ -377,9 +451,9 @@ export default function GameImage() {
     setCharacterSelection(true);
   }
 
-  const onCharacterSelected = () => {
+  const onCharacterSelected = async() => {
     setCharacterSelection(false);
-    handleDeposit();
+    await handleDeposit();
   }
   return (
     <>

@@ -2,6 +2,9 @@ import React, { useState, useEffect, useRef, useContext } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 
+
+
+
 import CharacterSelection from "./CharacterSelection";
 import WalletSection from "./WalletSection";
 import Leaderboard from "./Leaderboard";
