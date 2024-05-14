@@ -154,7 +154,7 @@ export default function GameImage() {
       }
     }
   };
-  const cleanup = (imageSet, npunch) => {
+  const cleanup = (imageSet, npunch, wif) => {
     clearInterval(intervalRef.current);
     intervalRef.current = null;
     setFlipImages(false);
@@ -169,18 +169,21 @@ export default function GameImage() {
       playSound(SoundTypes.PUNCH);
     }
 
-    setSNSLink(generateLink(npunch));
+    setSNSLink(generateLink(npunch, wif));
     setTimeout(() => {
       setIsOpen(true);
     }, 1500);
     
-    setTweetImage(npunch > 35 ? player === "ansem" ? winImage : t3_cook_win : player==="kook" ? loseImage : loseImage_cook);
+    setTweetImage(npunch > WIN_PUNCHES ? player === "ansem" ? winImage : t3_cook_win : player==="kook" ? loseImage : loseImage_cook);
     setPlayer(null);
     handleDefault();
     // resume background music
     setPunches(0);
     setDoges(0);
   };
+  useEffect(() => {
+    console.log(wifAmount);
+  }, [wifAmount]);
 
   const render = (currentImages) => {
     for (let i = 0; i < currentImages.length; i++) {
@@ -304,14 +307,14 @@ export default function GameImage() {
     return currentImages;
   };
 
-  const handleImageUpdate = (maxRuns, imageSet, delay, npunch) => {
+  const handleImageUpdate = (maxRuns, imageSet, delay, npunch, wif) => {
     let runCount = 0;
     clearInterval(intervalRef.current);
     const id = setInterval(
       async () => {
         if (runCount >= maxRuns) {
           //cleanup
-          cleanup(imageSet, npunch);
+          cleanup(imageSet, npunch, wif);
           return;
         }
 
@@ -361,10 +364,11 @@ export default function GameImage() {
   const closePopUp = () => {
     setIsOpen(false);
     setSNSLink("");
+    setWifAmount(0);
   };
 
-  const generateLink = (npunch) => {
-    const text = `I landed ${npunch} punches and donated ${wifAmount} !!!!`;
+  const generateLink = (npunch, wif) => {
+    const text = `I landed ${npunch} punches and donated ${wif} !!!!`;
     return `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&image=${tweetImage}`
   }
 
