@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const Error = ({ err }) => {
+const Error = ({ err, color }) => {
   const [isVisible, setIsVisible] = useState(false);
 
   // Function to handle setting isVisible to false after 10 seconds
@@ -21,7 +21,7 @@ const Error = ({ err }) => {
   return (
     <>
       {isVisible && (
-        <div className="absolute z-[1000] bottom-0 left-0 text-xl p-2 rounded-sm bg-red-500 text-white">
+        <div className={`text-xl p-2 rounded-sm ${color === "red" ? "bg-red-500" : "bg-green-500" } text-white`}>
           {err}
         </div>
       )}
