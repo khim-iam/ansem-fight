@@ -12,7 +12,7 @@ import GameImage from "./GameImage";
 import DepositButton from "./DepositButton";
 import {
   SoundTypes,
-  dogeProbs,
+  dodgeProbs,
   imageSets,
   sounds,
   PunchesConfig,
@@ -24,10 +24,10 @@ import ansemPunch from "../assets/idlee.png";
 import t3ansemPunch from "../assets/t33.png";
 import upansemPunch from "../assets/uppercut.png";
 import "./Homepage.css";
-import cook_doge_1 from "../assets/doge_1_rev.png";
-import cook_doge_2 from "../assets/doge_2_rev.png";
-import ansem_doge_1 from "../assets/doge_1.png";
-import ansem_doge_2 from "../assets/doge_2.png";
+import cook_dodge_1 from "../assets/dodge_1_rev.png";
+import cook_dodge_2 from "../assets/dodge_2_rev.png";
+import ansem_dodge_1 from "../assets/dodge_1.png";
+import ansem_dodge_2 from "../assets/dodge_2.png";
 import cook_t3_pwrup from "../assets/t33_rev.png";
 import t3_cook_win from "../assets/t3_cook_win.png";
 import t1ansemPunch from "../assets/T1-Ansem-Punch2.png";

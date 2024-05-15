@@ -6,7 +6,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import {
   SoundTypes,
-  dogeProbs,
+  dodgeProbs,
   imageSets,
   sounds,
   PunchesConfig,
@@ -19,10 +19,10 @@ import ansemPunch from "../assets/idlee.png";
 import t3ansemPunch from "../assets/t33.png";
 import upansemPunch from "../assets/uppercut.png";
 import "./Homepage.css";
-import cook_doge_1 from "../assets/doge_1_rev.png";
-import cook_doge_2 from "../assets/doge_2_rev.png";
-import ansem_doge_1 from "../assets/doge_1.png";
-import ansem_doge_2 from "../assets/doge_2.png";
+import cook_dodge_1 from "../assets/dodge_1_rev.png";
+import cook_dodge_2 from "../assets/dodge_2_rev.png";
+import ansem_dodge_1 from "../assets/dodge_1.png";
+import ansem_dodge_2 from "../assets/dodge_2.png";
 import cook_t3_pwrup from "../assets/t33_rev.png";
 import t3_cook_win from "../assets/t3_cook_win.png";
 import t1ansemPunch from "../assets/T1-Ansem-Punch2.png";
@@ -69,7 +69,7 @@ export default function GameImage() {
   const [isOpen, setIsOpen] = useState(false);
   const [isNew, setIsNew] = useState(false);
   const [SNSlink, setSNSLink] = useState("");
-  const [doges, setDoges] = useState(0);
+  const [dodges, setdodges] = useState(0);
   const [isOpenWIFD, setIsOpenWIFD] = useState(false);
   const [loggerBuf, setLoggerBuf] = useState([]);
   const playSound = (soundType, forcePlay = false) => {
@@ -89,7 +89,7 @@ export default function GameImage() {
     lose: new Howl({ src: [sounds[SoundTypes.LOSE]], volume: 0.5 }),
     bell: new Howl({ src: [sounds[SoundTypes.BELL]], volume: 0.5 }),
     tier3: new Howl({ src: [sounds[SoundTypes.TIER3]], volume: 0.5 }),
-    doge: new Howl({src: [sounds[SoundTypes.DOGE]], volume:0.5}),
+    dodge: new Howl({src: [sounds[SoundTypes.dodge]], volume:0.5}),
     background: new Howl({ src: [sounds.background], loop: true, volume: 0.1 }),
   });
 
@@ -389,30 +389,30 @@ const transactionSignature = await connection.sendRawTransaction(
     handleDefault();
     // resume background music
     setPunches(0);
-    setDoges(0);
+    setdodges(0);
   };
   useEffect(() => {
     console.log(wifAmount);
   }, [wifAmount]);
 
   const render = (currentImages) => {
-    let doge_sound_played = false;
+    let dodge_sound_played = false;
     for (let i = 0; i < currentImages.length; i++) {
       setTimeout(
         () => {
-          //excluding doge sequence from flip
+          //excluding dodge sequence from flip
           if (
             currentImages[i] === cook_t3_pwrup ||
             currentImages[i] === t3_cook_win
           ) {
             setFlipImages(false); // Set flip images to false
           } else if (
-            currentImages[i] === ansem_doge_1 ||
-            currentImages[i] === ansem_doge_2 ||
-            currentImages[i] === cook_doge_1 ||
-            currentImages[i] === cook_doge_2
+            currentImages[i] === ansem_dodge_1 ||
+            currentImages[i] === ansem_dodge_2 ||
+            currentImages[i] === cook_dodge_1 ||
+            currentImages[i] === cook_dodge_2
           ) {
-            if (!doge_sound_played){setTimeout(() => playSound(SoundTypes.DOGE), 2 / SPEED); doge_sound_played=true;};
+            if (!dodge_sound_played){setTimeout(() => playSound(SoundTypes.dodge), 2 / SPEED); dodge_sound_played=true;};
             setFlipImages(false);
           } else if (player === "kook") {
             setFlipImages(true); // Reset flip for cook
@@ -425,15 +425,15 @@ const transactionSignature = await connection.sendRawTransaction(
             soundRef.current.tier3.play();
           } else if (
             !(
-              currentImages[i] === ansem_doge_1 ||
-              currentImages[i] === ansem_doge_2 ||
-              currentImages[i] === cook_doge_1 ||
-              currentImages[i] === cook_doge_2 ||
+              currentImages[i] === ansem_dodge_1 ||
+              currentImages[i] === ansem_dodge_2 ||
+              currentImages[i] === cook_dodge_1 ||
+              currentImages[i] === cook_dodge_2 ||
               currentImages[i] === ansemPunch
             )
           ) {
             // Play punch sound for all but the last image
-            doge_sound_played = false;
+            dodge_sound_played = false;
             setTimeout(() => playSound(SoundTypes.PUNCH), 2 / SPEED);
             if((
               player === "kook" && !(currentImages[i] === t1ansemPunch ||currentImages[i] === t2ansemPunch)
@@ -442,7 +442,7 @@ const transactionSignature = await connection.sendRawTransaction(
             )){
               setPunches((p) => p + 1);
             }else{
-              setDoges((d) => d + 1);
+              setdodges((d) => d + 1);
             }
           }
           if (currentImage !== currentImages[i]){
@@ -461,31 +461,31 @@ const transactionSignature = await connection.sendRawTransaction(
     let currentImages = [...imageSet];
 
     if (imageSet === imageSets.ansem_t1 || imageSet === imageSets.cook_t1) {
-      const doges = Math.random() < dogeProbs.t1 ? true : false;
-      if (doges) {
+      const dodges = Math.random() < dodgeProbs.t1 ? true : false;
+      if (dodges) {
         currentImages =
           player === "ansem"
             ? Math.random() < 0.5
-              ? imageSets.ansem_doge_1
-              : imageSets.ansem_doge_2
+              ? imageSets.ansem_dodge_1
+              : imageSets.ansem_dodge_2
             : Math.random() < 0.5
-              ? imageSets.cook_doge_1
-              : imageSets.cook_doge_2;
+              ? imageSets.cook_dodge_1
+              : imageSets.cook_dodge_2;
       }
     } else if (
       imageSet === imageSets.ansem_t2 ||
       imageSet === imageSets.cook_t2
     ) {
-      const doges = Math.random() < dogeProbs.t2 ? true : false;
-      if (doges) {
+      const dodges = Math.random() < dodgeProbs.t2 ? true : false;
+      if (dodges) {
         currentImages =
           player === "ansem"
             ? Math.random() < 0.5
-              ? imageSets.ansem_doge_1
-              : imageSets.ansem_doge_2
+              ? imageSets.ansem_dodge_1
+              : imageSets.ansem_dodge_2
             : Math.random() < 0.5
-              ? imageSets.cook_doge_1
-              : imageSets.cook_doge_2;
+              ? imageSets.cook_dodge_1
+              : imageSets.cook_dodge_2;
       } else {
         const numPunches = Math.random() < 0.5 ? 1 : 2;
         const punches = shuffleArray(imageSet.slice(1)).slice(0, numPunches);
@@ -496,7 +496,7 @@ const transactionSignature = await connection.sendRawTransaction(
       imageSet === imageSets.cook_t3
     ) {
       if (runCount + 1 !== maxRuns) {
-        const doges = Math.random() < dogeProbs.t3 ? true : false;
+        const dodges = Math.random() < dodgeProbs.t3 ? true : false;
         currentImages =
           Math.random() > 0.5
             ? player === "ansem"
@@ -505,15 +505,15 @@ const transactionSignature = await connection.sendRawTransaction(
             : player === "ansem"
               ? imageSets.ansem_t2
               : imageSets.cook_t2;
-        if (doges) {
+        if (dodges) {
           currentImages =
             player === "ansem"
               ? Math.random() < 0.5
-                ? imageSets.ansem_doge_1
-                : imageSets.ansem_doge_2
+                ? imageSets.ansem_dodge_1
+                : imageSets.ansem_dodge_2
               : Math.random() < 0.5
-                ? imageSets.cook_doge_1
-                : imageSets.cook_doge_2;
+                ? imageSets.cook_dodge_1
+                : imageSets.cook_dodge_2;
         }
       }
     }
@@ -537,7 +537,7 @@ const transactionSignature = await connection.sendRawTransaction(
           runCount,
           maxRuns,
         );
-        if (currentImages.includes(cook_doge_1) || currentImages.includes(cook_doge_2) || currentImages.includes(ansem_doge_1) || currentImages.includes(ansem_doge_2)){
+        if (currentImages.includes(cook_dodge_1) || currentImages.includes(cook_dodge_2) || currentImages.includes(ansem_dodge_1) || currentImages.includes(ansem_dodge_2)){
           delay = 800;
         }else if (delay != 0){
           delay = 0;
@@ -693,7 +693,7 @@ const transactionSignature = await connection.sendRawTransaction(
     <GameOverPopup isOpen={isOpen} onClose={closePopUp} image={tweetImage} link={SNSlink} />
     {isOpenWIFD && <DepostiWifPopUp onClose={onCloseWIFD} setOpen={setIsOpenWIFD}/>}
     <div ref={containerRef} className="image-container relative overflow-hidden">
-      {currentImage !== ansem && <div className="absolute left-7 text-3xl custom-heading"><p>Punches Landed: {punches}</p><p>Doges: {doges}</p></div>}
+      {currentImage !== ansem && <div className="absolute left-7 text-3xl custom-heading"><p>Punches Landed: {punches}</p><p>dodges: {dodges}</p></div>}
       {!characterSelection && currentImage === ansem && <div className="absolute bottom-8 scale-[135%]"><DepositButton text="Play" onDeposit={handleOnDeposit} isDisabled={false}/></div>}
       {characterSelection ? 
         <div className="">
