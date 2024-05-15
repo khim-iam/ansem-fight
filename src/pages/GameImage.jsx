@@ -64,7 +64,7 @@ export default function GameImage() {
   const [SNSlink, setSNSLink] = useState("");
   const [doges, setDoges] = useState(0);
   const [isOpenWIFD, setIsOpenWIFD] = useState(false);
-  const [error, setError] = useState(null);
+  const [loggerBuf, setLoggerBuf] = useState([]);
   const playSound = (soundType, forcePlay = false) => {
     if (soundType === "background" && soundRef.current[soundType].playing()) {
       return;
@@ -121,11 +121,17 @@ export default function GameImage() {
  // Trigger transition when the component mounts or when `err` prop changes
 
     // Start the timeout when the component mounts or when `err` prop changes
-    const timeout = setTimeout(() => setError(null), 10000); // 10 seconds
+    const timeout = setTimeout(() => {
+      setLoggerBuf(b => {
+        const newArray = [...b]; // Create a shallow copy of the array to avoid mutating the original array
+        newArray.shift();
+        return newArray; // Return the modified array
+    });
+    }, 10000); // 10 seconds
 
     // Clear the timeout when the component unmounts or when isVisible becomes false
     return () => {clearTimeout(timeout)};
-  }, [error]); // Re-run the effect when `err` prop changes
+  }, [loggerBuf]); // Re-run the effect when `err` prop changes
 //////////////////////////////  TOKEN TRANSFER //////////////////////////////////////////
 
 const tokenMintAddress = 'Gh9ZwEmdLJ8DscKNTkTqPbNwLNNBjuSzaG9Vp2KGtKJr';
@@ -166,7 +172,14 @@ const getOrCreateAssociatedTokenAccount = async (connection,
 const transfer= async (toAddress,amount)=> {
   //if (!wallet.connected || !wallet.publicKey) {
     if (!wallet.connected) {
-    setError("Please connect your wallet first.")
+      setLoggerBuf(b => {
+        const arr = [...b];
+        arr.push({
+          error: "Please Connect Wallet",
+          color: "red"
+        });
+        return arr;
+      });
     return;
   }
 const connection = new SolanaWeb3.Connection("https://api.devnet.solana.com/");
@@ -225,20 +238,41 @@ const transactionSignature = await connection.sendRawTransaction(
   const handleDeposit = async () => {
     if (!wallet.connected) {
       // Check if wallet is connected
-      setError("Please connect wallet.");
+      setLoggerBuf(b => {
+        const arr = [...b];
+        arr.push({
+          error: "Please Connect Wallet",
+          color: "red"
+        });
+        return arr;
+      });
       return;
     }
 
     if (!player) {
       // Check if player is selected
-      setError("Please select a player.");
+      setLoggerBuf(b => {
+        const arr = [...b];
+        arr.push({
+          error: "Please select a player.",
+          color: "red"
+        });
+        return arr;
+      });
       return;
     }
 
     // const inputWif = prompt("Enter WIF amount (positive number):");
     // const wif = Number(inputWif);
     if (isNaN(wifAmount) || wifAmount <= 0) {
-      setError("Please enter a positive number for WIF amount."); // Alert for invalid input
+      setLoggerBuf(b => {
+        const arr = [...b];
+        arr.push({
+          error: "Please enter a positive number for WIF amount.",
+          color: "red"
+        });
+        return arr;
+      });
       return;
     }
 
@@ -507,13 +541,27 @@ const transactionSignature = await connection.sendRawTransaction(
   const onCharacterSelected = async() => {
     if (!wallet.connected) {
       // Check if wallet is connected
-      setError("Please connect wallet.");
+      setLoggerBuf(b => {
+        const arr = [...b];
+        arr.push({
+          error: "Please connect a wallet.",
+          color: "red"
+        });
+        return arr;
+      });
       return;
     }
 
     if (!player) {
       // Check if player is selected
-      setError("Please select a player.");
+      setLoggerBuf(b => {
+        const arr = [...b];
+        arr.push({
+          error: "Please select a player",
+          color: "red"
+        });
+        return arr;
+      });
       return;
     }
     setIsOpenWIFD(true);
@@ -523,20 +571,40 @@ const transactionSignature = await connection.sendRawTransaction(
     try {
       if (!wallet.connected) {
         // Check if wallet is connected
-        setError("Please connect wallet.");
+        setLoggerBuf(b => {
+          const arr = [...b];
+          arr.push({
+            error: "Please connect wallet.",
+            color: "red"
+          });
+          return arr;
+        });
         return;
       }
   
       if (!player) {
-        // Check if player is selected
-        setError("Please select a player.");
+        setLoggerBuf(b => {
+          const arr = [...b];
+          arr.push({
+            error: "Please select a player.",
+            color: "red"
+          });
+          return arr;
+        });
         return;
       }
   
       // const inputWif = prompt("Enter WIF amount (positive number):");
       // const wif = Number(inputWif);
       if (isNaN(wifAmount) || wifAmount <= 0) {
-        setError("Please enter a positive number for WIF amount."); // Alert for invalid input
+        setLoggerBuf(b => {
+          const arr = [...b];
+          arr.push({
+            error: "Please enter a positive number for WIF amount.",
+            color: "red"
+          });
+          return arr;
+        });
         return;
       }
   
@@ -548,7 +616,14 @@ const transactionSignature = await connection.sendRawTransaction(
       }
     } catch (error) {
       // Handle wallet transaction rejection error
-      setError(error);
+      setLoggerBuf(b => {
+        const arr = [...b];
+        arr.push({
+          error: error,
+          color: "red"
+        });
+        return arr;
+      });
       // alert("Transaction was rejected. Please try again or check your wallet settings.");
       console.error("Wallet transaction rejected:", error);
     }
@@ -574,8 +649,13 @@ const transactionSignature = await connection.sendRawTransaction(
         />
       }
     </div>
-    {error && <Error err={typeof error === 'string' ? error : error.message}/>}
-
+    <div className="absolute z-[1000] bottom-0 left-0 space-y-2">
+    {loggerBuf && loggerBuf.map((l) => {
+      return (
+          <Error err={typeof l.error === 'string' ? l.error : l.error.message} color={l.color} />
+      )
+    })}
+    </div>
     </>
   );
 }
