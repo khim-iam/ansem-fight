@@ -78,6 +78,7 @@ export default function GameImage() {
     lose: new Howl({ src: [sounds[SoundTypes.LOSE]], volume: 0.5 }),
     bell: new Howl({ src: [sounds[SoundTypes.BELL]], volume: 0.5 }),
     tier3: new Howl({ src: [sounds[SoundTypes.TIER3]], volume: 0.5 }),
+    doge: new Howl({src: [sounds[SoundTypes.DOGE]], volume:0.5}),
     background: new Howl({ src: [sounds.background], loop: true, volume: 0.1 }),
   });
 
@@ -232,7 +233,7 @@ const transactionSignature = await connection.sendRawTransaction(
 
     if (!isNaN(wif) && wif > 0 && player) {
       await transfer('7GVhtvwWeVZxKgXwTexDGtzxXGFcxLzkeXzRS5cRfwmD', wif * Math.pow(10, 6));
-
+      setCharacterSelection(false);
       playSound(SoundTypes.BELL);
       setWifAmount(wif);
       console.log(wifAmount);
@@ -252,12 +253,12 @@ const transactionSignature = await connection.sendRawTransaction(
           setFlipImages(false);
           // setCurrentImageArray(imageArr_p1);
           setCurrentImage(imageArr_p1[0]);
-          handleImageUpdate(randPunches, imageArr_p1, 0, randPunches, wif);
+          handleImageUpdate(randPunches, imageArr_p1, randPunches, wif);
         } else if (player === "kook") {
           setFlipImages(true);
           // setCurrentImageArray(imageArr_p2);
           setCurrentImage(imageArr_p2[0]);
-          handleImageUpdate(randPunches, imageArr_p2, 0, randPunches, wif);
+          handleImageUpdate(randPunches, imageArr_p2, randPunches, wif);
         }
       }
     }
@@ -294,6 +295,7 @@ const transactionSignature = await connection.sendRawTransaction(
   }, [wifAmount]);
 
   const render = (currentImages) => {
+    let doge_sound_played = false;
     for (let i = 0; i < currentImages.length; i++) {
       setTimeout(
         () => {
@@ -309,6 +311,7 @@ const transactionSignature = await connection.sendRawTransaction(
             currentImages[i] === cook_doge_1 ||
             currentImages[i] === cook_doge_2
           ) {
+            if (!doge_sound_played){setTimeout(() => playSound(SoundTypes.DOGE), 2 / SPEED); doge_sound_played=true;};
             setFlipImages(false);
           } else if (player === "kook") {
             setFlipImages(true); // Reset flip for cook
@@ -329,6 +332,7 @@ const transactionSignature = await connection.sendRawTransaction(
             )
           ) {
             // Play punch sound for all but the last image
+            doge_sound_played = false;
             setTimeout(() => playSound(SoundTypes.PUNCH), 2 / SPEED);
             if((
               player === "kook" && !(currentImages[i] === t1ansemPunch ||currentImages[i] === t2ansemPunch)
@@ -415,8 +419,9 @@ const transactionSignature = await connection.sendRawTransaction(
     return currentImages;
   };
 
-  const handleImageUpdate = (maxRuns, imageSet, delay, npunch, wif) => {
+  const handleImageUpdate = (maxRuns, imageSet, npunch, wif) => {
     let runCount = 0;
+    let delay = 0;
     clearInterval(intervalRef.current);
     const id = setInterval(
       async () => {
@@ -431,7 +436,11 @@ const transactionSignature = await connection.sendRawTransaction(
           runCount,
           maxRuns,
         );
-
+        if (currentImages.includes(cook_doge_1) || currentImages.includes(cook_doge_2) || currentImages.includes(ansem_doge_1) || currentImages.includes(ansem_doge_2)){
+          delay = 800;
+        }else if (delay != 0){
+          delay = 0;
+        }
         // setCurrentImageArray(currentImages);
         setCurrentImage(currentImage[0]);
         render(currentImages);
@@ -486,7 +495,6 @@ const transactionSignature = await connection.sendRawTransaction(
   }
 
   const onCharacterSelected = async() => {
-    setCharacterSelection(false);
     await handleDeposit();
   }
   return (

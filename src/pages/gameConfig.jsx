@@ -25,13 +25,14 @@ import loseImage_cook from "../assets/lose_cook.png";
 import winImage_cook from "../assets/win_cook.png";
 import cook_t3_pwrup from "../assets/t33_rev.png";
 import t3_cook_win from "../assets/t3_cook_win.png";
-
+import doge from "../assets/doge.mp3";
 const SoundTypes = {
   PUNCH: "punch",
   WIN: "win",
   LOSE: "lose",
   BELL: "bell",
   TIER3: "t3",
+  DOGE: "doge"
 };
 const dogeProbs = {
   t1: 0.4,
@@ -92,6 +93,7 @@ const sounds = {
   [SoundTypes.LOSE]: loseSound,
   [SoundTypes.BELL]: bellSound,
   [SoundTypes.TIER3]: t3Sound,
+  [SoundTypes.DOGE]: doge,
   background: bgSound,
 };
 
