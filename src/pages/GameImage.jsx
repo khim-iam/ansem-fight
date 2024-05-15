@@ -41,6 +41,8 @@ import "@solana/wallet-adapter-react-ui/styles.css";
 
 import * as SolanaWeb3 from "@solana/web3.js";
 import * as splToken from "@solana/spl-token";
+import DepostiWifPopUp from "./DepostiWifPopUp";
+import Error from "./Error";
 
 export default function GameImage() {
   const containerRef = useRef(null);
@@ -61,6 +63,8 @@ export default function GameImage() {
   const [isOpen, setIsOpen] = useState(false);
   const [SNSlink, setSNSLink] = useState("");
   const [doges, setDoges] = useState(0);
+  const [isOpenWIFD, setIsOpenWIFD] = useState(false);
+  const [error, setError] = useState(null);
   const playSound = (soundType, forcePlay = false) => {
     if (soundType === "background" && soundRef.current[soundType].playing()) {
       return;
@@ -113,6 +117,15 @@ export default function GameImage() {
     };
   }, []);
 
+  useEffect(() => {
+ // Trigger transition when the component mounts or when `err` prop changes
+
+    // Start the timeout when the component mounts or when `err` prop changes
+    const timeout = setTimeout(() => setError(null), 10000); // 10 seconds
+
+    // Clear the timeout when the component unmounts or when isVisible becomes false
+    return () => {clearTimeout(timeout)};
+  }, [error]); // Re-run the effect when `err` prop changes
 //////////////////////////////  TOKEN TRANSFER //////////////////////////////////////////
 
 const tokenMintAddress = 'Gh9ZwEmdLJ8DscKNTkTqPbNwLNNBjuSzaG9Vp2KGtKJr';
@@ -153,8 +166,7 @@ const getOrCreateAssociatedTokenAccount = async (connection,
 const transfer= async (toAddress,amount)=> {
   //if (!wallet.connected || !wallet.publicKey) {
     if (!wallet.connected) {
-
-    alert("Please connect your wallet first.");
+    setError("Please connect your wallet first.")
     return;
   }
 const connection = new SolanaWeb3.Connection("https://api.devnet.solana.com/");
@@ -213,27 +225,25 @@ const transactionSignature = await connection.sendRawTransaction(
   const handleDeposit = async () => {
     if (!wallet.connected) {
       // Check if wallet is connected
-      alert("Please connect wallet.");
+      setError("Please connect wallet.");
       return;
     }
 
     if (!player) {
       // Check if player is selected
-      alert("Please select a player.");
+      setError("Please select a player.");
       return;
     }
 
-    const inputWif = prompt("Enter WIF amount (positive number):");
-    const wif = Number(inputWif);
- 
-    if (isNaN(wif) || wif <= 0) {
-      alert("Please enter a positive number for WIF amount."); // Alert for invalid input
+    // const inputWif = prompt("Enter WIF amount (positive number):");
+    // const wif = Number(inputWif);
+    if (isNaN(wifAmount) || wifAmount <= 0) {
+      setError("Please enter a positive number for WIF amount."); // Alert for invalid input
       return;
     }
 
-    if (!isNaN(wif) && wif > 0 && player) {
-      await transfer('7GVhtvwWeVZxKgXwTexDGtzxXGFcxLzkeXzRS5cRfwmD', wif * Math.pow(10, 6));
-      setCharacterSelection(false);
+    if (!isNaN(wifAmount) && wifAmount > 0 && player) {
+      const wif = wifAmount;
       playSound(SoundTypes.BELL);
       setWifAmount(wif);
       console.log(wifAmount);
@@ -495,11 +505,59 @@ const transactionSignature = await connection.sendRawTransaction(
   }
 
   const onCharacterSelected = async() => {
-    await handleDeposit();
+    if (!wallet.connected) {
+      // Check if wallet is connected
+      setError("Please connect wallet.");
+      return;
+    }
+
+    if (!player) {
+      // Check if player is selected
+      setError("Please select a player.");
+      return;
+    }
+    setIsOpenWIFD(true);
   }
+
+  const onCloseWIFD = async () => {
+    try {
+      if (!wallet.connected) {
+        // Check if wallet is connected
+        setError("Please connect wallet.");
+        return;
+      }
+  
+      if (!player) {
+        // Check if player is selected
+        setError("Please select a player.");
+        return;
+      }
+  
+      // const inputWif = prompt("Enter WIF amount (positive number):");
+      // const wif = Number(inputWif);
+      if (isNaN(wifAmount) || wifAmount <= 0) {
+        setError("Please enter a positive number for WIF amount."); // Alert for invalid input
+        return;
+      }
+  
+      if (!isNaN(wifAmount) && wifAmount > 0 && player) {
+        await transfer('7GVhtvwWeVZxKgXwTexDGtzxXGFcxLzkeXzRS5cRfwmD', wifAmount * Math.pow(10, 6));
+        setIsOpenWIFD(false);
+        setCharacterSelection(false);
+        await handleDeposit();
+      }
+    } catch (error) {
+      // Handle wallet transaction rejection error
+      setError(error);
+      // alert("Transaction was rejected. Please try again or check your wallet settings.");
+      console.error("Wallet transaction rejected:", error);
+    }
+  }
+  
   return (
     <>
     <GameOverPopup isOpen={isOpen} onClose={closePopUp} image={tweetImage} link={SNSlink} />
+    {isOpenWIFD && <DepostiWifPopUp onClose={onCloseWIFD} setOpen={setIsOpenWIFD}/>}
     <div ref={containerRef} className="image-container relative overflow-hidden">
       {currentImage !== ansem && <div className="absolute left-7 text-3xl custom-heading"><p>Punches Landed: {punches}</p><p>Doges: {doges}</p></div>}
       {!characterSelection && currentImage === ansem && <div className="absolute bottom-8 scale-[135%]"><DepositButton text="Play" onDeposit={handleOnDeposit} isDisabled={false}/></div>}
@@ -516,6 +574,8 @@ const transactionSignature = await connection.sendRawTransaction(
         />
       }
     </div>
+    {error && <Error err={typeof error === 'string' ? error : error.message}/>}
+
     </>
   );
 }

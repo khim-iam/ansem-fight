@@ -63,7 +63,7 @@ const Token = () => {
               
               await wallet.sendTransaction(transaction, connection);
             }catch(error){
-
+              throw error;
             }
             account = await splToken.getAccount(connection, associatedToken);
           }else{
