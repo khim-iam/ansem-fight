@@ -44,6 +44,10 @@ import * as splToken from "@solana/spl-token";
 import DepostiWifPopUp from "./DepostiWifPopUp";
 import Error from "./Error";
 
+//import jwt from "jsonwebtoken";
+import sign from "jwt-encode";
+
+
 export default function GameImage() {
   const containerRef = useRef(null);
 
@@ -51,6 +55,7 @@ export default function GameImage() {
 
   const wallet = useWallet();
   const [punches, setPunches] = useState(0);
+  
 
 
   // const [currentImageArray, setCurrentImageArray] = useState(imageSets.default);
@@ -59,8 +64,10 @@ export default function GameImage() {
   const [currentImage, setCurrentImage] = useState(imageSets.default[0]);
   const [flipImages, setFlipImages] = useState(false);
   const {wifAmount, setWifAmount, player, setPlayer} = useContext(Context);
+  const [referredBy, setReferredBy] = useState('');
   const [tweetImage, setTweetImage] = useState(t3_cook_win);
   const [isOpen, setIsOpen] = useState(false);
+  const [isNew, setIsNew] = useState(false);
   const [SNSlink, setSNSLink] = useState("");
   const [doges, setDoges] = useState(0);
   const [isOpenWIFD, setIsOpenWIFD] = useState(false);
@@ -85,6 +92,8 @@ export default function GameImage() {
     doge: new Howl({src: [sounds[SoundTypes.DOGE]], volume:0.5}),
     background: new Howl({ src: [sounds.background], loop: true, volume: 0.1 }),
   });
+
+
 
   useEffect(() => {
     const handlePunchSound = () => {
@@ -126,6 +135,7 @@ export default function GameImage() {
     // Clear the timeout when the component unmounts or when isVisible becomes false
     return () => {clearTimeout(timeout)};
   }, [error]); // Re-run the effect when `err` prop changes
+
 //////////////////////////////  TOKEN TRANSFER //////////////////////////////////////////
 
 const tokenMintAddress = 'Gh9ZwEmdLJ8DscKNTkTqPbNwLNNBjuSzaG9Vp2KGtKJr';
@@ -259,6 +269,8 @@ const transactionSignature = await connection.sendRawTransaction(
               : PunchesConfig[2]); // t3
         const randPunches = generatePunches(minPunches, maxPunches);
 
+        
+
         if (player === "ansem") {
           setFlipImages(false);
           // setCurrentImageArray(imageArr_p1);
@@ -270,6 +282,52 @@ const transactionSignature = await connection.sendRawTransaction(
           setCurrentImage(imageArr_p2[0]);
           handleImageUpdate(randPunches, imageArr_p2, randPunches, wif);
         }
+
+
+
+        const handleSendData = async () => {
+
+          const data = {
+            wallet_address: wallet.publicKey.toString(),
+            punches: randPunches,
+            tokens: wif,
+            referredBy: referredBy 
+          };
+
+
+         const token = sign(data, 'your_secret_key_here');
+         await sendData(token);
+          
+        };
+
+
+        const sendData = async (userData) => {
+          try {
+            const response = await fetch('/api/check-wallet', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: userData
+            });
+        
+            if (!response.ok) {
+              throw new Error('Failed to send data');
+            }
+        
+            const responseData = await response.json();
+            console.log('Server Response:', responseData);
+            
+            //return responseData; 
+        
+          } catch (error) {
+            console.error('Error sending data:', error);
+          }
+        };
+
+        await handleSendData();
+
+
       }
     }
   };
@@ -553,6 +611,8 @@ const transactionSignature = await connection.sendRawTransaction(
       console.error("Wallet transaction rejected:", error);
     }
   }
+
+
   
   return (
     <>
@@ -565,6 +625,13 @@ const transactionSignature = await connection.sendRawTransaction(
         <div className="">
           <CharacterSelection/>
           <DepositButton className="absolute bottom-8 right-[31.25%]" text="Start Game" onDeposit={onCharacterSelected} isDisabled={false}/>
+        <input
+        type="text"
+        value={referredBy}
+        onChange={(e) => setReferredBy(e.target.value)}
+        placeholder="   Enter Referral Address"
+        className="absolute bottom-1 right-[38%]"
+      />
         </div> 
         :       
         <img
