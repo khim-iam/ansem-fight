@@ -20,11 +20,6 @@ const DepositWifPopUp = ({ onClose, setOpen }) => {
   const onSubmit = async (event) => {
     event.preventDefault();
     setWifAmount(inputValue);
-    while(true){
-        if(wifAmount === inputValue){
-            break;
-        }
-    }
     setIsSubmitting(true);
     await onClose();
 
