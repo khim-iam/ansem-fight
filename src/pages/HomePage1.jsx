@@ -31,10 +31,10 @@
 // import "./Homepage.css";
 // import opponent_t1 from "../assets/cook_punch_t1.png";
 // import opponent_t2 from "../assets/cook_punch_t2.png";
-// import cook_doge_1 from "../assets/doge_1_rev.png";
-// import cook_doge_2 from "../assets/doge_2_rev.png";
-// import ansem_doge_1 from "../assets/doge_1.png";
-// import ansem_doge_2 from "../assets/doge_2.png";
+// import cook_dodge_1 from "../assets/dodge_1_rev.png";
+// import cook_dodge_2 from "../assets/dodge_2_rev.png";
+// import ansem_dodge_1 from "../assets/dodge_1.png";
+// import ansem_dodge_2 from "../assets/dodge_2.png";
 // import loseImage_cook from "../assets/lose_cook.png";
 // import winImage_cook from "../assets/win_cook.png";
 // import cook_t3_pwrup from "../assets/t33_rev.png";
@@ -47,7 +47,7 @@
 //   BELL: "bell",
 //   TIER3: "t3",
 // };
-// const dogeProbs = {
+// const dodgeProbs = {
 //   t1: 0.4,
 //   t2: 0.3,
 //   t3: 0.2,
@@ -59,10 +59,10 @@
 //   cook_t1: [ansemPunch, opponent_t1],
 //   cook_t2: [ansemPunch, opponent_t1, opponent_t2],
 //   cook_t3: [ansemPunch, cook_t3_pwrup, t3_cook_win],
-//   cook_doge_1: [ansemPunch, cook_doge_1, cook_doge_1, cook_doge_1, cook_doge_1, cook_doge_1, t1ansemPunch],
-//   cook_doge_2: [ansemPunch, cook_doge_2, cook_doge_2, cook_doge_2, cook_doge_2, cook_doge_2, t2ansemPunch],
-//   ansem_doge_1: [ansemPunch, ansem_doge_1, ansem_doge_1, ansem_doge_1, ansem_doge_1, ansem_doge_1, opponent_t1],
-//   ansem_doge_2: [ansemPunch, ansem_doge_2, ansem_doge_2, ansem_doge_2, ansem_doge_2, ansem_doge_2, opponent_t2],
+//   cook_dodge_1: [ansemPunch, cook_dodge_1, cook_dodge_1, cook_dodge_1, cook_dodge_1, cook_dodge_1, t1ansemPunch],
+//   cook_dodge_2: [ansemPunch, cook_dodge_2, cook_dodge_2, cook_dodge_2, cook_dodge_2, cook_dodge_2, t2ansemPunch],
+//   ansem_dodge_1: [ansemPunch, ansem_dodge_1, ansem_dodge_1, ansem_dodge_1, ansem_dodge_1, ansem_dodge_1, opponent_t1],
+//   ansem_dodge_2: [ansemPunch, ansem_dodge_2, ansem_dodge_2, ansem_dodge_2, ansem_dodge_2, ansem_dodge_2, opponent_t2],
 //   default: [ansem, ansemPunch, t1ansemPunch],
 //   result_ansem: [loseImage, winImage],
 //   result_cook: [loseImage_cook, t3_cook_win],
@@ -208,31 +208,31 @@
 //         let currentImages = [...imageSet];
 
 //         if (imageSet === imageSets.ansem_t1 || imageSet === imageSets.cook_t1) {
-//           const doges = Math.random() < dogeProbs.t1 ? true : false;
-//           if (doges) {
+//           const dodges = Math.random() < dodgeProbs.t1 ? true : false;
+//           if (dodges) {
 //             currentImages =
 //               player === "ansem"
 //                 ? Math.random() < 0.5
-//                   ? imageSets.ansem_doge_1
-//                   : imageSets.ansem_doge_2
+//                   ? imageSets.ansem_dodge_1
+//                   : imageSets.ansem_dodge_2
 //                 : Math.random() < 0.5
-//                   ? imageSets.cook_doge_1
-//                   : imageSets.cook_doge_2;
+//                   ? imageSets.cook_dodge_1
+//                   : imageSets.cook_dodge_2;
 //           }
 //         } else if (
 //           imageSet === imageSets.ansem_t2 ||
 //           imageSet === imageSets.cook_t2
 //         ) {
-//           const doges = Math.random() < dogeProbs.t2 ? true : false;
-//           if (doges) {
+//           const dodges = Math.random() < dodgeProbs.t2 ? true : false;
+//           if (dodges) {
 //             currentImages =
 //               player === "ansem"
 //                 ? Math.random() < 0.5
-//                   ? imageSets.ansem_doge_1
-//                   : imageSets.ansem_doge_2
+//                   ? imageSets.ansem_dodge_1
+//                   : imageSets.ansem_dodge_2
 //                 : Math.random() < 0.5
-//                   ? imageSets.cook_doge_1
-//                   : imageSets.cook_doge_2;
+//                   ? imageSets.cook_dodge_1
+//                   : imageSets.cook_dodge_2;
 //           } else {
 //             const numPunches = Math.random() < 0.5 ? 1 : 2;
 //             const punches = shuffleArray(imageSet.slice(1)).slice(
@@ -246,7 +246,7 @@
 //           imageSet === imageSets.cook_t3
 //         ) {
 //           if (runCount + 1 !== maxRuns){
-//             const doges = Math.random() < dogeProbs.t3 ? true : false;
+//             const dodges = Math.random() < dodgeProbs.t3 ? true : false;
 //             currentImages = Math.random() > 0.5 ?
 //                               player === "ansem"
 //                                 ? imageSets.ansem_t1
@@ -254,15 +254,15 @@
 //                               : player === "ansem"
 //                                 ? imageSets.ansem_t2
 //                                 : imageSets.cook_t2;
-//             if (doges) {
+//             if (dodges) {
 //               currentImages =
 //                 player === "ansem"
 //                   ? Math.random() < 0.5
-//                     ? imageSets.ansem_doge_1
-//                     : imageSets.ansem_doge_2
+//                     ? imageSets.ansem_dodge_1
+//                     : imageSets.ansem_dodge_2
 //                   : Math.random() < 0.5
-//                     ? imageSets.cook_doge_1
-//                     : imageSets.cook_doge_2;
+//                     ? imageSets.cook_dodge_1
+//                     : imageSets.cook_dodge_2;
 //             }
 //           }
 //         }
@@ -271,17 +271,17 @@
 //         for (let i = 0; i < currentImages.length; i++) {
 //           setTimeout(
 //             () => {
-//               //excluding doge sequence from flip
+//               //excluding dodge sequence from flip
 //               if (
 //                 currentImages[i] === cook_t3_pwrup ||
 //                 currentImages[i] === t3_cook_win
 //               ) {
 //                 setFlipImages(false); // Set flip images to false
 //               } else if (
-//                 currentImages[i] === ansem_doge_1 ||
-//                 currentImages[i] === ansem_doge_2 ||
-//                 currentImages[i] === cook_doge_1 ||
-//                 currentImages[i] === cook_doge_2
+//                 currentImages[i] === ansem_dodge_1 ||
+//                 currentImages[i] === ansem_dodge_2 ||
+//                 currentImages[i] === cook_dodge_1 ||
+//                 currentImages[i] === cook_dodge_2
 //               ) {
 //                 setFlipImages(false);
 //               } else if (player === "kook") {
@@ -293,10 +293,10 @@
 //               ) {
 //                 soundRef.current.tier3.play();
 //               } else if (
-//                 !(currentImages[i] === ansem_doge_1 ||
-//                 currentImages[i] === ansem_doge_2 ||
-//                 currentImages[i] === cook_doge_1 ||
-//                 currentImages[i] === cook_doge_2 || currentImages[i] === ansemPunch)
+//                 !(currentImages[i] === ansem_dodge_1 ||
+//                 currentImages[i] === ansem_dodge_2 ||
+//                 currentImages[i] === cook_dodge_1 ||
+//                 currentImages[i] === cook_dodge_2 || currentImages[i] === ansemPunch)
 //               ) {
 //                 // Play punch sound for all but the last image
 //                 setTimeout(() => playSound(SoundTypes.PUNCH), 2 / SPEED);
