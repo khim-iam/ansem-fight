@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect } from 'react';
 import { Context } from '../App';
 import '../App.css'; // Make sure to import the CSS file containing the animation
 
-const DepositWifPopUp = ({ onClose, setOpen }) => {
+ const DepositWifPopUp = ({ onClose, setOpen }) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -15,7 +15,7 @@ const DepositWifPopUp = ({ onClose, setOpen }) => {
     return () => clearTimeout(timeout);
   }, []);
 
-  const { wifAmount, setWifAmount, player, setPlayer } = useContext(Context);
+  const { wifAmount, setWifAmount, player, setPlayer, loggerBuf, } = useContext(Context);
 
   const onSubmit = async (event) => {
     event.preventDefault();

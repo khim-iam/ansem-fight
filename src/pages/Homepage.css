@@ -10,7 +10,7 @@
   position: relative;
   z-index: 100;
 }
-.image-container2{
+.image-container2 {
   background-image: url("../assets/Background.png");
   background-size: cover;
   background-position: center;
@@ -99,7 +99,7 @@
   text-transform: uppercase;
   transition: transform 0.4s ease; /* Apply the transition to the transform property */
 }
-.pixel3{
+.pixel3 {
   color: black;
   display: inline-block;
   background: white;

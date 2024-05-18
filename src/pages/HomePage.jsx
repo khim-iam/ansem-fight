@@ -2,9 +2,6 @@ import React, { useState, useEffect, useRef, useContext } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 
-
-
-
 import CharacterSelection from "./CharacterSelection";
 import WalletSection from "./WalletSection";
 import Leaderboard from "./Leaderboard";
@@ -41,7 +38,7 @@ import loseImage from "../assets/lose.png";
 import loseImage_cook from "../assets/lose_cook.png";
 import { Context } from "../App";
 function HomePage() {
-  const {wifAmount, setWifAmount, player, setPlayer} = useContext(Context);
+  const { wifAmount, setWifAmount, player, setPlayer } = useContext(Context);
   const [leaderboard, setLeaderboard] = useState([
     { name: "Player One", score: 50 },
     { name: "Player Two", score: 45 },
@@ -54,8 +51,8 @@ function HomePage() {
   return (
     <>
       {/* <GameOverPopup isOpen={isOpen} onClose={closePopUp} image={tweetImage} link={SNSlink} /> */}
-      
-      <GameImage/>
+
+      <GameImage />
       <h1 className="custom-heading text-[61px] text-[#2196F3]">
         Ansem vs. Kook
       </h1>

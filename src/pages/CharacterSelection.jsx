@@ -1,18 +1,210 @@
 import { useWallet } from "@solana/wallet-adapter-react";
 import WalletSection from "./WalletSection";
 import DepositButton from "./DepositButton";
-import ansem from "../assets/StartGame11.png";
-import kook from "../assets/startkook.png";
+import ansem from '../assets/StartGame11.png';
 import { Context } from "../App";
-import { useContext } from "react";
+import { useContext, useState } from "react";
+import DepositWifPopUp from "./DepostiWifPopUp";
+import MainGame from "./MainGame";
+import kook from "../assets/cook.png";
+import * as SolanaWeb3 from "@solana/web3.js";
+import * as splToken from "@solana/spl-token";
 export default function CharacterSelection() {
   const wallet = useWallet();
   const onPlayerChange = (e) => {
     setPlayer(e.target.value);
   }
-  const {wifAmount, setWifAmount, player, setPlayer} = useContext(Context);
+  const tokenMintAddress = 'Gh9ZwEmdLJ8DscKNTkTqPbNwLNNBjuSzaG9Vp2KGtKJr';
+  const {wifAmount, setWifAmount, player, setPlayer, loggerBuf, setLoggerBuf} = useContext(Context);
+  const [isOpenWIFD, setIsOpenWIFD] = useState(false);
+  const [referredBy, setReferredBy] = useState("");
+  const [transactionSuccess, setTransactionSuccess] = useState(false);
+  const getOrCreateAssociatedTokenAccount = async (connection,
+    mint,
+    owner) => {
+      const associatedToken = await splToken.getAssociatedTokenAddress(mint, owner);
+  
+      let account;
+      try{
+        account = await splToken.getAccount(connection, associatedToken);
+      }catch (error){
+        if (error instanceof splToken.TokenAccountNotFoundError || error instanceof splToken.TokenInvalidAccountOwnerError){
+          try{
+            const transaction = new SolanaWeb3.Transaction().add(
+              splToken.createAssociatedTokenAccountInstruction(
+                wallet.publicKey,
+                associatedToken,
+                owner,
+                mint
+              )
+            );
+            
+            await wallet.sendTransaction(transaction, connection);
+          }catch(error){
+  
+          }
+          account = await splToken.getAccount(connection, associatedToken);
+        }else{
+          throw error;
+        }
+      }
+      return account;
+  }
+  const transfer= async (toAddress,amount)=> {
+    //if (!wallet.connected || !wallet.publicKey) {
+      if (!wallet.connected) {
+        setLoggerBuf(b => {
+          const arr = [...b];
+          arr.push({
+            error: "Please Connect Wallet",
+            color: "red"
+          });
+          return arr;
+        });
+      return;
+    }
+  const connection = new SolanaWeb3.Connection("https://api.devnet.solana.com/");
+  const mintPublicKey = new SolanaWeb3.PublicKey(tokenMintAddress);  
+  const {TOKEN_PROGRAM_ID} = splToken;
+  const fromTokenAccount = await getOrCreateAssociatedTokenAccount(
+                  connection,
+                  mintPublicKey,
+                  wallet.publicKey
+                );
+  const destPublicKey = new SolanaWeb3.PublicKey(toAddress);
+  const associatedDestinationTokenAddr = await getOrCreateAssociatedTokenAccount(
+                  connection,
+                  mintPublicKey,
+                  destPublicKey
+                );
+  //const instructions: solanaWeb3.TransactionInstruction[] = [];
+  const instructions = [];
+  
+  instructions.push(
+                  splToken.createTransferInstruction(
+                    fromTokenAccount.address,
+                    associatedDestinationTokenAddr.address,
+                    wallet.publicKey,
+                    amount,
+                    [],
+                    TOKEN_PROGRAM_ID
+                  )
+                );
+  
+  const transaction = new SolanaWeb3.Transaction().add(...instructions);
+  const blockhash = await connection.getLatestBlockhash();
+  transaction.feePayer = wallet.publicKey;
+  transaction.recentBlockhash = blockhash.blockhash;
+  //change1
+  const signed = await wallet.signTransaction(transaction);
+  const transactionSignature = await connection.sendRawTransaction(
+                  signed.serialize(),
+                { skipPreflight: true }
+                );
+  // const transactionSignature = await connection.sendRawTransaction(
+  //                 transaction.serialize(),
+  //                 { skipPreflight: true }
+  //               );
+                const strategy = {
+                  blockhash: blockhash.blockhash,
+                  lastValidBlockHeight: blockhash.lastValidBlockHeight,
+                  signature: transactionSignature
+                }
+                await connection.confirmTransaction(strategy);
+                console.log("Confirmed");
+  }
+  const onCharacterSelected = async() => {
+    if (!wallet.connected) {
+      // Check if wallet is connected
+      setLoggerBuf(b => {
+        const arr = [...b];
+        arr.push({
+          error: "Please connect a wallet.",
+          color: "red"
+        });
+        return arr;
+      });
+      return;
+    }
+
+    if (!player) {
+      // Check if player is selected
+      setLoggerBuf(b => {
+        const arr = [...b];
+        arr.push({
+          error: "Please select a player",
+          color: "red"
+        });
+        return arr;
+      });
+      return;
+    }
+    setIsOpenWIFD(true);
+  }
+  const onCloseWIFD = async () => {
+    try {
+      if (!wallet.connected) {
+        // Check if wallet is connected
+        setLoggerBuf(b => {
+          const arr = [...b];
+          arr.push({
+            error: "Please connect wallet.",
+            color: "red"
+          });
+          return arr;
+        });
+        return;
+      }
+  
+      if (!player) {
+        setLoggerBuf(b => {
+          const arr = [...b];
+          arr.push({
+            error: "Please select a player.",
+            color: "red"
+          });
+          return arr;
+        });
+        return;
+      }
+  
+      // const inputWif = prompt("Enter WIF amount (positive number):");
+      // const wif = Number(inputWif);
+      if (isNaN(wifAmount) || wifAmount <= 0) {
+        setLoggerBuf(b => {
+          const arr = [...b];
+          arr.push({
+            error: "Please enter a positive number for WIF amount.",
+            color: "red"
+          });
+          return arr;
+        });
+        return;
+      }
+  
+      if (!isNaN(wifAmount) && wifAmount > 0 && player) {
+        await transfer('7GVhtvwWeVZxKgXwTexDGtzxXGFcxLzkeXzRS5cRfwmD', wifAmount * Math.pow(10, 6));
+        setIsOpenWIFD(false);
+        setTransactionSuccess(true);
+      }
+    } catch (error) {
+      // Handle wallet transaction rejection error
+      setLoggerBuf(b => {
+        const arr = [...b];
+        arr.push({
+          error: error,
+          color: "red"
+        });
+        return arr;
+      });
+      // alert("Transaction was rejected. Please try again or check your wallet settings.");
+      console.error("Wallet transaction rejected:", error);
+    }
+  }
   return (
-    <div className="custom-heading w-full h-0">
+    <>
+    {isOpenWIFD && <DepositWifPopUp onClose={onCloseWIFD} setOpen={setIsOpenWIFD}/> }
+    {!transactionSuccess ? <div className="custom-heading w-full h-0">
       <div className="text-7xl">Choose characters</div>
       <div className="space-x-24 flex mb-8 justify-center text-5xl items-center">
       <label className={`${player==="ansem" ? "text-red-500" : "text-white"}`}>
@@ -40,6 +232,17 @@ export default function CharacterSelection() {
       </div>
 
       <WalletSection wallet={wallet} />
-    </div>
+      <DepositButton className="absolute bottom-8 right-[31.25%]" text="Start Game" onDeposit={onCharacterSelected} isDisabled={false}/>
+      <input
+      type="text"
+      value={referredBy}
+      onChange={(e) => setReferredBy(e.target.value)}
+      placeholder="   Enter Referral Address"
+      className="absolute bottom-1 w-[23%] text-sm right-[40%]"
+      />
+    </div>:
+    <MainGame />
+    }
+    </>
   );
 }

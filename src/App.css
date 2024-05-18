@@ -64,7 +64,10 @@
 }
 
 @keyframes dot-blink {
-  0%, 25%, 75%, 100% {
+  0%,
+  25%,
+  75%,
+  100% {
     visibility: hidden;
   }
   50% {

@@ -4617,6 +4617,10 @@ ajv@^6.12.4:
     json-schema-traverse "^0.4.1"
     uri-js "^4.2.2"
 
+"ansem-wasm@file:pkg":
+  version "0.1.0"
+  resolved "file:pkg"
+
 anser@^1.4.9:
   version "1.4.10"
   resolved "https://registry.npmjs.org/anser/-/anser-1.4.10.tgz"

@@ -32,7 +32,7 @@ const SoundTypes = {
   LOSE: "lose",
   BELL: "bell",
   TIER3: "t3",
-  dodge: "dodge"
+  dodge: "dodge",
 };
 const dodgeProbs = {
   t1: 0.4,
@@ -120,4 +120,12 @@ const PunchesConfig = [
 ];
 const SPEED = 2;
 const WIN_PUNCHES = 13;
-export { SoundTypes, dodgeProbs, imageSets, sounds, PunchesConfig, SPEED, WIN_PUNCHES };
+export {
+  SoundTypes,
+  dodgeProbs,
+  imageSets,
+  sounds,
+  PunchesConfig,
+  SPEED,
+  WIN_PUNCHES,
+};
