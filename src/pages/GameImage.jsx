@@ -29,38 +29,13 @@ export default function GameImage() {
   // const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const {
-    wifAmount,
-    setWifAmount,
-    player,
-    setPlayer,
     loggerBuf,
-    setLoggerBuf,
   } = useContext(Context);
 
   const soundRef = useRef({
     background: new Howl({ src: [sounds.background], loop: true, volume: 0.1 }),
   });
 
-  // todo implement camerashake in wasm
-
-  // useEffect(() => {
-  //   const handlePunchSound = () => {
-  //     setTimeout(() => {
-  //       containerRef.current.classList.add("cameraShake");
-  //       setTimeout(() => {
-  //         containerRef.current.classList.remove("cameraShake");
-  //       }, 50 / SPEED); // remove the class after 75ms
-  //     }, 30 / SPEED); // add the class 200ms before the punch sound plays
-  //   };
-
-  //   soundRef.current.punch.on("play", (id, seek) => {
-  //     setTimeout(handlePunchSound, seek / SPEED - 1 / SPEED); // add cameraShake 100ms before playback
-  //   });
-
-  //   return () => {
-  //     soundRef.current.punch.off("play", handlePunchSound);
-  //   };
-  // }, [soundRef, containerRef]);
 
   useEffect(() => {
     // Try to play background music on load
@@ -85,9 +60,10 @@ export default function GameImage() {
       </div>
       <div className="absolute z-[1000] bottom-0 left-0 space-y-2">
         {loggerBuf &&
-          loggerBuf.map((l) => {
+          loggerBuf.map((l, i) => {
             return (
               <Error
+                key={i}
                 err={typeof l.error === "string" ? l.error : l.error.message}
                 color={l.color}
               />

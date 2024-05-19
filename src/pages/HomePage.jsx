@@ -38,16 +38,27 @@ import loseImage from "../assets/lose.png";
 import loseImage_cook from "../assets/lose_cook.png";
 import { Context } from "../App";
 function HomePage() {
-  const { wifAmount, setWifAmount, player, setPlayer } = useContext(Context);
-  const [leaderboard, setLeaderboard] = useState([
-    { name: "Player One", score: 50 },
-    { name: "Player Two", score: 45 },
-    { name: "Player Three", score: 30 },
-  ]);
+  const { wifAmount, leaderboard, setLeaderboard } = useContext(Context);
   const wallet = useWallet();
   const shortenAddress = (address) => {
     return `${address.slice(0, 4)}...${address.slice(-4)}`;
   };
+  const fetchInitialLeaderboard = async () => {
+    try {
+      const leaderboardResponse = await fetch('http://localhost:5000/api/leaderboard');
+      if (!leaderboardResponse.ok) {
+        throw new Error('Failed to fetch leaderboard data');
+      }
+      const leaderboardData = await leaderboardResponse.json();
+      setLeaderboard(leaderboardData);
+    } catch (error) {
+      console.error('Error fetching leaderboard data:', error);
+    }
+  };
+  useEffect(() => {
+    fetchInitialLeaderboard();
+  }, []);
+
   return (
     <>
       {/* <GameOverPopup isOpen={isOpen} onClose={closePopUp} image={tweetImage} link={SNSlink} /> */}

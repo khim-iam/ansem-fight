@@ -15,9 +15,8 @@ export default function CharacterSelection() {
     setPlayer(e.target.value);
   }
   const tokenMintAddress = 'Gh9ZwEmdLJ8DscKNTkTqPbNwLNNBjuSzaG9Vp2KGtKJr';
-  const {wifAmount, setWifAmount, player, setPlayer, loggerBuf, setLoggerBuf} = useContext(Context);
+  const {wifAmount, player, setPlayer, setLoggerBuf, referredBy, setReferredBy} = useContext(Context);
   const [isOpenWIFD, setIsOpenWIFD] = useState(false);
-  const [referredBy, setReferredBy] = useState("");
   const [transactionSuccess, setTransactionSuccess] = useState(false);
   const getOrCreateAssociatedTokenAccount = async (connection,
     mint,

@@ -5,33 +5,34 @@ import t3_cook_win from "../assets/t3_cook_win.png";
 import { generateLink } from "../helpers/generateLink";
 import GameCover from "./GameCover";
 import GameOverPopUp from "./GameOverPopUp";
-import { getLeaderboardData, handleSendData } from "../helpers/dataHandlers";
 import { useWallet } from "@solana/wallet-adapter-react";
-
+import { getLeaderboardData, handleSendData } from "../helpers/dataHandlers";
 const MainGame = () => {
   const [isOpen, setIsOpen] = useState(false);
   const {
     wifAmount,
     setWifAmount,
     player,
-    setPlayer,
-    loggerBuf,
-    setLoggerBuf,
+    setLeaderboard,
+    referredBy
   } = useContext(Context);
   const [tweetImage, setTweetImage] = useState(t3_cook_win);
   const [SNSlink, setSNSLink] = useState("");
   const [gameCover, setGameCover] = useState(false);
   const wallet = useWallet();
   const hasLoaded = useRef(false); // Ref to track if the component has already loaded
-
+  
   const onLoad = async () => {
     await init();
     const npunch = await render(player, wifAmount);
     setSNSLink(generateLink(npunch, wifAmount, tweetImage));
     // await handleSendData(wallet, npunch);
     // await getLeaderboardData();
+    await handleSendData(npunch, wifAmount, referredBy, wallet)
+    await getLeaderboardData(setLeaderboard);
     setIsOpen(true);
     setGameCover(true);
+    
   };
 
   useEffect(() => {

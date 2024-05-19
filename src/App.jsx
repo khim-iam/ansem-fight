@@ -19,6 +19,8 @@ function App() {
   const wallets = useMemo(() => [], [network]);
   const [wifAmount, setWifAmount] = useState(0);
   const [player, setPlayer] = useState(null);
+  const [leaderboard, setLeaderboard] = useState([]);
+  const [referredBy, setReferredBy] = useState("");
   useEffect(() => {
     const timeout = setTimeout(() => {
       setLoggerBuf((b) => {
@@ -43,6 +45,10 @@ function App() {
               setPlayer,
               loggerBuf,
               setLoggerBuf,
+              leaderboard,
+              setLeaderboard,
+              referredBy,
+              setReferredBy
             }}
           >
             <HomePage />
