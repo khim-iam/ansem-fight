@@ -4617,9 +4617,9 @@ ajv@^6.12.4:
     json-schema-traverse "^0.4.1"
     uri-js "^4.2.2"
 
-"ansem-wasm@file:ansem-wasm/pkg":
+"ansem-wasm@file:pkg":
   version "0.1.0"
-  resolved "file:ansem-wasm/pkg"
+  resolved "file:pkg"
 
 anser@^1.4.9:
   version "1.4.10"

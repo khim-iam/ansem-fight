@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState, useRef } from "react";
-import init, { Game } from "ansem-wasm";
+import init, { render } from "ansem-wasm";
 import { Context } from "../App";
 import t3_cook_win from "../assets/t3_cook_win.png";
 import { generateLink } from "../helpers/generateLink";
@@ -26,7 +26,7 @@ const MainGame = () => {
 
   const onLoad = async () => {
     await init();
-    const npunch = await Game.render(player, wifAmount);
+    const npunch = await render(player, wifAmount);
     setSNSLink(generateLink(npunch, wifAmount, tweetImage));
     // await handleSendData(wallet, npunch);
     // await getLeaderboardData();

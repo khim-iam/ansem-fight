@@ -8,6 +8,7 @@ const GameCover = () => {
   const handleOnDeposit = () => {
     setCharacterSelection(true);
   };
+  
   return (
     <>
       {!characterSelection ? (
