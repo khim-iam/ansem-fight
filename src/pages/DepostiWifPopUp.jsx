@@ -1,25 +1,25 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect, useRef } from 'react';
 import { Context } from '../App';
 import '../App.css'; // Make sure to import the CSS file containing the animation
 
  const DepositWifPopUp = ({ onClose, setOpen }) => {
   const [isLoaded, setIsLoaded] = useState(false);
-  const [inputValue, setInputValue] = useState('');
+
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const hasLoaded = useRef(false);
+
+
   useEffect(() => {
-    const timeout = setTimeout(() => {
+    if (!hasLoaded.current) {
       setIsLoaded(true);
-    }, 500);
-
-    return () => clearTimeout(timeout);
+      hasLoaded.current = true; 
+    }
   }, []);
-
-  const { wifAmount, setWifAmount, player, setPlayer, loggerBuf, } = useContext(Context);
+  const {wifAmount, setWifAmount} = useContext(Context);
 
   const onSubmit = async (event) => {
     event.preventDefault();
-    setWifAmount(inputValue);
     setIsSubmitting(true);
     await onClose();
 
@@ -51,8 +51,8 @@ import '../App.css'; // Make sure to import the CSS file containing the animatio
         <form onSubmit={onSubmit} className="space-x-2">
           <input
             type="number"
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
+            value={wifAmount}
+            onChange={(e) => setWifAmount(e.target.value)}
             className="bg-white ring-2 ring-black"
           />
           <button type="submit" className="bg-white">OK!</button>

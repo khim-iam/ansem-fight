@@ -20,6 +20,8 @@ export default function WalletSection({ wallet }) {
     //     )}
     //   </div> */}
     // </div>
-    <WalletMultiButton1 />
+    <>
+      <WalletMultiButton1 />
+    </>
   );
 }
