@@ -7,6 +7,10 @@ import GameCover from "./GameCover";
 import GameOverPopUp from "./GameOverPopUp";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { getLeaderboardData, handleSendData } from "../helpers/dataHandlers";
+import { WIN_PUNCHES } from "./gameConfig";
+import winImage from "../assets/win.png";
+import loseImage from "../assets/lose.png";
+import loseImage_cook from "../assets/lose_cook.png";
 const MainGame = () => {
   const [isOpen, setIsOpen] = useState(false);
   const {
@@ -16,7 +20,7 @@ const MainGame = () => {
     setLeaderboard,
     referredBy
   } = useContext(Context);
-  const [tweetImage, setTweetImage] = useState(t3_cook_win);
+  const [tweetImage, setTweetImage] = useState("");
   const [SNSlink, setSNSLink] = useState("");
   const [gameCover, setGameCover] = useState(false);
   const wallet = useWallet();
@@ -32,7 +36,19 @@ const MainGame = () => {
     await getLeaderboardData(setLeaderboard);
     setIsOpen(true);
     setGameCover(true);
-    
+    if (npunch > WIN_PUNCHES){
+      if (player === "ansem"){
+        setTweetImage(winImage);
+      }else{
+        setTweetImage(t3_cook_win);
+      }
+    }else{
+      if (player === "ansem"){
+        setTweetImage(loseImage)
+      }else{
+        setTweetImage(loseImage_cook);
+      }
+    }
   };
 
   useEffect(() => {
