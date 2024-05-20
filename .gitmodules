@@ -1,0 +1,3 @@
+[submodule "ansem-wasm"]
+	path = ansem-wasm
+	url = https://github.com/JoeruCodes/ansem-fight
