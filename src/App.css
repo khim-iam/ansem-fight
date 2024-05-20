@@ -31,10 +31,8 @@
 }
 
 .custom-heading {
-  font-family: '8bit', sans-serif;
-
+  font-family: "8bit", sans-serif;
 }
-
 
 @keyframes logo-spin {
   from {
@@ -46,10 +44,9 @@
 }
 
 @font-face {
-  font-family: '8bit';
-  src: url('./assets/8-bit.ttf') format('truetype');
+  font-family: "8bit";
+  src: url("./assets/8-bit.ttf") format("truetype");
 }
-
 
 @media (prefers-reduced-motion: no-preference) {
   a:nth-of-type(2) .logo {
@@ -64,4 +61,46 @@
 
 .read-the-docs {
   color: #888;
+}
+
+@keyframes dot-blink {
+  0%,
+  25%,
+  75%,
+  100% {
+    visibility: hidden;
+  }
+  50% {
+    visibility: visible;
+  }
+}
+
+.dot {
+  display: inline-block;
+  margin-left: 0px;
+  animation: dot-blink 1s infinite;
+}
+
+.dot:nth-child(2) {
+  animation-delay: 0.33s;
+}
+
+.dot:nth-child(3) {
+  animation-delay: 0.66s;
+}
+/* Define the animation keyframes */
+@keyframes popup {
+  0% {
+    opacity: 0;
+    transform: translateY(50%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Apply the animation to the error message */
+.animate-popup {
+  animation: popup 1s ease forwards;
 }
