@@ -29,7 +29,8 @@ export const handleSendData = async (randPunches, wif, referredBy, wallet) => {
 
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'ngrok-skip-browser-warning': 'true'
       },
       body: JSON.stringify(finishPayload),
     });
@@ -54,7 +55,9 @@ export const sendData = async (userData) => {
 
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'ngrok-skip-browser-warning': 'true'
+
       },
       body: JSON.stringify({ token: userData }),
     });
