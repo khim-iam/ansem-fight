@@ -133,8 +133,8 @@
 
 // For example, in your HomePage.jsx
 
-import React, { useState, useEffect, useRef } from "react";
-import { Howl } from "howler";
+// import React, { useState, useEffect, useRef } from "react";
+// import { Howl } from "howler";
 import ansem from "@/assets/start.png";
 import ansemPunch from "@/assets/idlee.png";
 import t1ansemPunch from "@/assets/T1-Ansem-Punch2.png";
