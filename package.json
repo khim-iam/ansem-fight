@@ -8,7 +8,7 @@
     "build": "vite build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "postinstall": "git submodule update --init --recursive && npm install ./wasm-ansem-fight/pkg"
+    "postinstall": "npm install ./wasm-ansem-fight/pkg"
   },
   "dependencies": {
     "@coral-xyz/anchor": "^0.30.0",
